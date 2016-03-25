@@ -76,9 +76,10 @@ bool S_SceneAI::PreUpdate()
 // Called each loop iteration
 bool S_SceneAI::Update(float dt)
 {
-	/*
+	
 	ManageInput(dt);
 
+	/*
 	SDL_Rect rect1 = { 0, 0, 0, 0 };
 	if (App->pathFinding->wallUp)
 		App->render->Blit(mapTexture_wall, &rect1, true);
