@@ -120,20 +120,54 @@ void M_EntityManager::DoUnitLoop(float dt)
 	{
 		selectionRect.w = selectionRect.h = 0;
 		selectUnits = false;
-		/*
+		
 		if (selectedUnits.count() != 0)
 		{
+			bool sort = false;
 			uint min = selectedUnits.start->data->team;
+			item = selectedUnits.start;
 
-			for (item = selectedUnits.start; item; item = item->next)
-				min = (item->data->team < min ? item->data->team : min);
-
-			for (item = selectedUnits.start; item; item = item->next)
+			while (item)
 			{
 				if (item->data->team != min)
-					selectedUnits.del(selectedUnits.At(selectedUnits.find(item->data)));
+				{
+					sort = true;
+					min = (item->data->team < min ? item->data->team : min);
+				}
+
+				item = item->next;
 			}
-		}*/
+
+			if (sort)
+			{
+				item = selectedUnits.start;
+
+				while (item)
+				{
+					if (item->next == NULL)
+					{
+						if (item->data->team != min)
+						{
+							item->data->selected = false;
+							item->data->UpdateBarState();
+							selectedUnits.del(item);
+						}
+
+						return;
+					}
+					if (item->data->team != min)
+					{
+						item->data->selected = false;
+						item->data->UpdateBarState();
+
+						item = item->next;
+						selectedUnits.del(item->prev);
+					}
+					else
+						item = item->next;
+				}
+			}
+		}
 	}
 }
 

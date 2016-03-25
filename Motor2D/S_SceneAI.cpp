@@ -44,6 +44,8 @@ bool S_SceneAI::Awake(pugi::xml_node& node)
 // Called before the first frame
 bool S_SceneAI::Start()
 {
+	team = 0;
+
 	pugi::xml_node config = App->GetConfig("scene");
 	App->GetConfig("scene");
 
@@ -153,7 +155,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER, 0);
+			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER, team);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{

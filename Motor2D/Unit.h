@@ -78,7 +78,7 @@ public:
 	iPoint target;
 	int currentNode = 0;
 	bool targetReached = true;
-	uint team = 0;
+	uint team;
 
 };
 

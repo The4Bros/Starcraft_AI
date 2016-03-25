@@ -63,6 +63,8 @@ public:
 
 private:
 
+	uint team;
+
 #pragma region Commands
 
 	struct C_SaveGame : public Command
