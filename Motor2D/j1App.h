@@ -16,12 +16,15 @@ class j1Gui;
 class M_GUI;
 class M_Audio;
 class M_FileSystem;
-class S_SceneMap;
 class M_Map;
 class M_PathFinding;
 class M_Console;
 class M_EntityManager;
 class M_CollisionController;
+
+class S_SceneMap;
+class M_AI;
+class S_SceneAI;
 
 class j1App
 {
@@ -102,7 +105,6 @@ public:
 	M_Render*				render = NULL;
 	M_Textures*				tex = NULL;
 	M_Audio*				audio = NULL;
-	S_SceneMap*				sceneMap = NULL;
 	M_FileSystem*			fs = NULL;
 	M_Map*					map = NULL;
 	M_PathFinding*			pathFinding = NULL;
@@ -111,6 +113,10 @@ public:
 	M_Console*				console = NULL;
 	M_EntityManager*		entityManager = NULL;
 	M_CollisionController*	collisionController = NULL;
+
+	S_SceneMap*				sceneMap = NULL;
+	M_AI*					AI = NULL;
+	S_SceneAI*				sceneAI = NULL;
 
 private:
 

@@ -76,6 +76,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="M_AI.cpp" />
+    <ClCompile Include="S_SceneAI.cpp" />
     <ClCompile Include="Controlled.cpp" />
     <ClCompile Include="CVar.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -106,6 +108,8 @@
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="M_AI.h" />
+    <ClInclude Include="S_SceneAI.h" />
     <ClInclude Include="Controlled.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="memleaks.h" />
