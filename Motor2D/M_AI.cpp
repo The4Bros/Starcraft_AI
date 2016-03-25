@@ -22,7 +22,7 @@
 
 M_AI::M_AI(bool start_enabled) : j1Module(start_enabled)
 {
-	name.create("scene_AI");
+	name.create("AI");
 }
 
 

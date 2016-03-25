@@ -76,10 +76,8 @@ bool S_SceneAI::PreUpdate()
 // Called each loop iteration
 bool S_SceneAI::Update(float dt)
 {
-	
 	ManageInput(dt);
 
-	/*
 	SDL_Rect rect1 = { 0, 0, 0, 0 };
 	if (App->pathFinding->wallUp)
 		App->render->Blit(mapTexture_wall, &rect1, true);
@@ -94,7 +92,7 @@ bool S_SceneAI::Update(float dt)
 	SDL_Rect pos = { p.x, p.y, 8, 8 };
 	SDL_Rect rect = { 0, 0, 64, 64 };
 	App->render->Blit(debug_tex, &pos, true, &rect);
-	*/
+	
 	return true;
 }
 
@@ -166,11 +164,7 @@ void S_SceneAI::ManageInput(float dt)
 
 void S_SceneAI::LoadGUI()
 {
-	UI_Label* lab = App->gui->CreateUI_Label({ 100, 100, 0, 0 }, "Hello");
-	lab->SetColor(255, 0, 255);
-
-	UI_InputText* inp = App->gui->CreateUI_InputText(350, 350, "Hello! :D it's me", { 0, 0, 200, 200 }, 10, 10);
-	inp->AddListener(this);
+	
 }
 
 void S_SceneAI::OnGUI(GUI_EVENTS event, UI_Element* element)
