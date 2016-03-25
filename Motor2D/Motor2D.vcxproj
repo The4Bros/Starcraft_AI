@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2AF9969B-F202-497B-AF30-7BEF9CE8005E}</ProjectGuid>
+    <RootNamespace>programacio_2</RootNamespace>
+    <ProjectName>Unit Movement</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <ShowIncludes>false</ShowIncludes>
+      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Controlled.cpp" />
+    <ClCompile Include="CVar.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="M_EntityManager.cpp" />
+    <ClCompile Include="M_CollisionController.cpp" />
+    <ClCompile Include="M_FileSystem.cpp" />
+    <ClCompile Include="M_Fonts.cpp" />
+    <ClCompile Include="M_GUI.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="j1App.cpp" />
+    <ClCompile Include="M_Audio.cpp" />
+    <ClCompile Include="M_Input.cpp" />
+    <ClCompile Include="M_Map.cpp" />
+    <ClCompile Include="M_Console.cpp" />
+    <ClCompile Include="M_PathFinding.cpp" />
+    <ClCompile Include="j1PerfTimer.cpp" />
+    <ClCompile Include="S_SceneMap.cpp" />
+    <ClCompile Include="j1Timer.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="M_Render.cpp" />
+    <ClCompile Include="M_Textures.cpp" />
+    <ClCompile Include="M_Window.cpp" />
+    <ClCompile Include="PugiXml\src\pugixml.cpp" />
+    <ClCompile Include="UIElements.cpp" />
+    <ClCompile Include="UI_Element.cpp" />
+    <ClCompile Include="UI_Factory.cpp" />
+    <ClCompile Include="UI_PositionManagement.cpp" />
+    <ClCompile Include="Unit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Controlled.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="memleaks.h" />
+    <ClInclude Include="M_EntityManager.h" />
+    <ClInclude Include="C_Animation.h" />
+    <ClInclude Include="M_CollisionController.h" />
+    <ClInclude Include="M_Console.h" />
+    <ClInclude Include="M_FileSystem.h" />
+    <ClInclude Include="M_Fonts.h" />
+    <ClInclude Include="j1Gui.h" />
+    <ClInclude Include="M_GUI.h" />
+    <ClInclude Include="M_Map.h" />
+    <ClInclude Include="M_PathFinding.h" />
+    <ClInclude Include="j1PerfTimer.h" />
+    <ClInclude Include="S_SceneMap.h" />
+    <ClInclude Include="j1Timer.h" />
+    <ClInclude Include="C_DynArray.h" />
+    <ClInclude Include="M_Audio.h" />
+    <ClInclude Include="M_Input.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="j1App.h" />
+    <ClInclude Include="Defs.h" />
+    <ClInclude Include="C_List.h" />
+    <ClInclude Include="j1Module.h" />
+    <ClInclude Include="C_Point.h" />
+    <ClInclude Include="M_Render.h" />
+    <ClInclude Include="M_Textures.h" />
+    <ClInclude Include="M_Window.h" />
+    <ClInclude Include="C_String.h" />
+    <ClInclude Include="C_Vec2.h" />
+    <ClInclude Include="PugiXml\src\pugiconfig.hpp" />
+    <ClInclude Include="PugiXml\src\pugixml.hpp" />
+    <ClInclude Include="UIElements.h" />
+    <ClInclude Include="UI_Element.h" />
+    <ClInclude Include="Unit.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Notes.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

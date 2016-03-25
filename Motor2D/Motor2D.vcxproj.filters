@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="j1App.cpp">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClCompile>
+    <ClCompile Include="PugiXml\src\pugixml.cpp">
+      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+    </ClCompile>
+    <ClCompile Include="j1Timer.cpp">
+      <Filter>Desenvolupament  ========\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="j1PerfTimer.cpp">
+      <Filter>Desenvolupament  ========\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElements.cpp">
+      <Filter>Desenvolupament  ========\UI_M\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_PositionManagement.cpp">
+      <Filter>Desenvolupament  ========\UI_M\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="CVar.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Controlled.cpp">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Factory.cpp">
+      <Filter>Desenvolupament  ========\Modules\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Audio.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_FileSystem.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Fonts.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Input.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Render.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Textures.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Window.cpp">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Console.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="M_Map.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="M_PathFinding.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="S_SceneMap.cpp">
+      <Filter>Desenvolupament  ========\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Element.cpp">
+      <Filter>Desenvolupament  ========\Modules\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="M_GUI.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClCompile>
+    <ClCompile Include="M_CollisionController.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="M_EntityManager.cpp">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="j1App.h">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClInclude>
+    <ClInclude Include="j1Module.h">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClInclude>
+    <ClInclude Include="PugiXml\src\pugiconfig.hpp">
+      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="PugiXml\src\pugixml.hpp">
+      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="j1Timer.h">
+      <Filter>Desenvolupament  ========\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="j1PerfTimer.h">
+      <Filter>Desenvolupament  ========\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElements.h">
+      <Filter>Desenvolupament  ========\UI_M\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Controlled.h">
+      <Filter>Desenvolupament  ========\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="j1Gui.h">
+      <Filter>Desenvolupament  ========\UI_M</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Audio.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_FileSystem.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Fonts.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Input.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Render.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Textures.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Window.h">
+      <Filter>Desenvolupament  ========\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Console.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="M_Map.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="M_PathFinding.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="S_SceneMap.h">
+      <Filter>Desenvolupament  ========\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="C_DynArray.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="C_List.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="C_Point.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="C_String.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="C_Vec2.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Element.h">
+      <Filter>Desenvolupament  ========\Modules\UI_Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="M_GUI.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Defs.h">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Desenvolupament  ========</Filter>
+    </ClInclude>
+    <ClInclude Include="C_Animation.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="M_CollisionController.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="M_EntityManager.h">
+      <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="memleaks.h">
+      <Filter>Desenvolupament  ========\Tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Desenvolupament  ========">
+      <UniqueIdentifier>{cb944693-b9d0-484c-bad2-02d5a7cdbec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Tools">
+      <UniqueIdentifier>{42c748be-4a37-49de-970f-5be811d06b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Scenes">
+      <UniqueIdentifier>{e07660eb-d36f-4cc9-af59-324d31c2f2f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Modules">
+      <UniqueIdentifier>{244722d1-90ce-423d-8e7a-556211865a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Tools\PuguiXML">
+      <UniqueIdentifier>{7cb78d67-17cc-45eb-af97-e2106becce7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Entities">
+      <UniqueIdentifier>{0d674021-ff84-4051-afa7-ff3f5808df5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Core">
+      <UniqueIdentifier>{ac081281-5682-42ab-a48f-ee8d114b0041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\UI_M">
+      <UniqueIdentifier>{07b93974-d2e7-4971-bbb7-37eec17e5c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\UI_M\UIElements">
+      <UniqueIdentifier>{0bc44bb6-5cec-4b87-9682-45b45b89d62f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Containers">
+      <UniqueIdentifier>{a8bfab6a-5472-4969-943e-861a8b493f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Modules\UI_Elements">
+      <UniqueIdentifier>{1b70bce6-0d3f-4baa-b30b-eef1e52b1681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Notes">
+      <UniqueIdentifier>{d5b685ff-6b55-42a2-a49d-52bdff8dd95a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Desenvolupament  ========\Modules\Orders">
+      <UniqueIdentifier>{59ccbe01-adf3-4a59-a5a7-9eaf2e03cd37}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Notes.txt">
+      <Filter>Notes</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
