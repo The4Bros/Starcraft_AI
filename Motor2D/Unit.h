@@ -19,7 +19,7 @@ class Unit : public Controlled
 {
 public:
 	Unit();
-	Unit(float x, float y);
+	Unit(float x, float y, uint team);
 	Unit(fPoint);
 	~Unit();
 
@@ -78,6 +78,7 @@ public:
 	iPoint target;
 	int currentNode = 0;
 	bool targetReached = true;
+	uint team = 0;
 
 };
 

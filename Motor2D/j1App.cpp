@@ -19,7 +19,6 @@
 #include "M_EntityManager.h"
 #include "M_CollisionController.h"
 
-#include "S_SceneMap.h"
 #include "M_AI.h"
 #include "S_SceneAI.h"
 
@@ -41,8 +40,6 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AI = new M_AI(true);
 
 	//Scenes-------------------------
-	sceneMap = new S_SceneMap(false);
-	
 	sceneAI = new S_SceneAI(true);
 	//-------------------------------
 
@@ -65,9 +62,8 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(gui);
 	AddModule(console);
 
-	AddScene(sceneMap);
-	AddModule(AI);
 	AddScene(sceneAI);
+	AddModule(AI);
 
 	AddModule(entityManager);
 	AddModule(pathFinding);

@@ -107,8 +107,8 @@ int main(int argc, char* args[])
 		}
 	}
 
-	LOG("... Bye! :)\n\n");
-
+	LOG("... Bye! :)\n\n"); 
+	ReportMemoryLeaks();
 
 
 	// Dump memory leaks

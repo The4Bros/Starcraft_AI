@@ -21,8 +21,6 @@ class M_PathFinding;
 class M_Console;
 class M_EntityManager;
 class M_CollisionController;
-
-class S_SceneMap;
 class M_AI;
 class S_SceneAI;
 
@@ -113,8 +111,6 @@ public:
 	M_Console*				console = NULL;
 	M_EntityManager*		entityManager = NULL;
 	M_CollisionController*	collisionController = NULL;
-
-	S_SceneMap*				sceneMap = NULL;
 	M_AI*					AI = NULL;
 	S_SceneAI*				sceneAI = NULL;
 

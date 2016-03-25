@@ -12,14 +12,14 @@
 #include "UI_Element.h"
 #include "M_PathFinding.h"
 
-#include "S_SceneMap.h"
+#include "S_SceneAI.h"
 
 Unit::Unit() :Controlled()
 {
 
 }
 
-Unit::Unit(float x, float y)
+Unit::Unit(float x, float y, uint team): team(team)
 {
 	position = { x, y };
 }
@@ -335,7 +335,7 @@ void Unit::Draw()
 	SDL_Rect rect = {0, 0, 76, 76 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-	if (App->sceneMap->renderUnits)
+	if (App->sceneAI->renderUnits)
 	{
 		if (selected)
 			App->render->Blit(App->entityManager->unit_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
@@ -346,7 +346,7 @@ void Unit::Draw()
 	}
 
 	//Should be independent from scene
-	if (App->sceneMap->renderForces)
+	if (App->sceneAI->renderForces)
 		DrawDebug();
 }
 
@@ -391,7 +391,7 @@ void Unit::DrawDebug()
 			SDL_Rect rect = { 0, 0, 64, 64 };
 			if (i < (uint)currentNode)
 				rect = { 0, 0, 64, 64 };
-			App->render->Blit(App->sceneMap->debug_tex, &pos, true, &rect);
+			App->render->Blit(App->sceneAI->debug_tex, &pos, true, &rect);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #define __ENTITYMANAGER_H__
 
 #include "j1Module.h"
+#include <map>
 
 class Unit;
 enum Unit_Type;
@@ -23,7 +24,11 @@ public:
 
 	void ManageInput();
 
-	Unit* CreateUnit(int x, int y, Unit_Type);
+	Unit* CreateUnit(int x, int y, Unit_Type, uint team);
+	Unit* CreateBot(int x, int y, Unit_Type, uint team);
+	Unit* CreateStarcraftBot(int x, int y, Unit_Type, uint team);
+
+
 	bool deleteUnit(C_List_item<Unit*>* item);
 
 	bool IsUnitSelected(C_List_item<Unit*>*);

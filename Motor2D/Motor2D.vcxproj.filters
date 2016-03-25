@@ -67,9 +67,6 @@
     <ClCompile Include="M_PathFinding.cpp">
       <Filter>Desenvolupament  ========\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="S_SceneMap.cpp">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="UI_Element.cpp">
       <Filter>Desenvolupament  ========\Modules\UI_Elements</Filter>
     </ClCompile>
@@ -85,11 +82,11 @@
     <ClCompile Include="M_EntityManager.cpp">
       <Filter>Desenvolupament  ========\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="S_SceneAI.cpp">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="M_AI.cpp">
       <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="S_SceneAI.cpp">
+      <Filter>Desenvolupament  ========\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,9 +153,6 @@
     <ClInclude Include="M_PathFinding.h">
       <Filter>Desenvolupament  ========\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="S_SceneMap.h">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="C_DynArray.h">
       <Filter>Containers</Filter>
     </ClInclude>
@@ -198,11 +192,11 @@
     <ClInclude Include="memleaks.h">
       <Filter>Desenvolupament  ========\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="S_SceneAI.h">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="M_AI.h">
       <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="S_SceneAI.h">
+      <Filter>Desenvolupament  ========\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

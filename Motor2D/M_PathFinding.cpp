@@ -6,7 +6,7 @@
 #include "Unit.h"
 #include "M_Input.h"
 #include "M_Render.h"
-#include "S_SceneMap.h"
+#include "S_SceneAI.h"
 
 M_PathFinding::M_PathFinding(bool start_enabled) : j1Module(start_enabled)
 {

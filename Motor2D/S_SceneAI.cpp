@@ -19,7 +19,7 @@
 
 S_SceneAI::S_SceneAI(bool start_enabled) : j1Module(start_enabled)
 {
-	name.create("scene_AI");
+	name.create("scene_ai");
 }
 
 // Destructor
@@ -82,17 +82,17 @@ bool S_SceneAI::Update(float dt)
 	if (App->pathFinding->wallUp)
 		App->render->Blit(mapTexture_wall, &rect1, true);
 	else
-		App->render->Blit(mapTexture, &rect1, true);
+		App->render->Blit(mapTexture, &rect1, true);	
 
 	if (renderMap)
 		App->map->Draw();
-
+	
 	//Render current tile
 	iPoint p = App->map->MapToWorld(currentTile_x, currentTile_y);
 	SDL_Rect pos = { p.x, p.y, 8, 8 };
 	SDL_Rect rect = { 0, 0, 64, 64 };
 	App->render->Blit(debug_tex, &pos, true, &rect);
-	
+
 	return true;
 }
 
@@ -153,7 +153,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER);
+			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER, 0);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{
@@ -164,7 +164,11 @@ void S_SceneAI::ManageInput(float dt)
 
 void S_SceneAI::LoadGUI()
 {
-	
+	UI_Label* lab = App->gui->CreateUI_Label({ 100, 100, 0, 0 }, "Hello");
+	lab->SetColor(255, 0, 255);
+
+	UI_InputText* inp = App->gui->CreateUI_InputText(350, 350, "Hello! :D it's me", { 0, 0, 200, 200 }, 10, 10);
+	inp->AddListener(this);
 }
 
 void S_SceneAI::OnGUI(GUI_EVENTS event, UI_Element* element)
@@ -181,3 +185,5 @@ void::S_SceneAI::C_LoadGame::function(const C_DynArray<C_String>* arg)
 {
 	App->LoadGame("save_game.xml");
 }
+
+#pragma endregion

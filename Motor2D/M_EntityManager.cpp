@@ -7,7 +7,7 @@
 #include "M_Input.h"
 #include "M_Map.h"
 #include "M_PathFinding.h"
-#include "S_SceneMap.h"
+#include "S_SceneAI.h"
 #include "M_CollisionController.h"
 
 M_EntityManager::M_EntityManager(bool start_enabled) : j1Module(start_enabled)
@@ -43,7 +43,7 @@ bool M_EntityManager::Update(float dt)
 	DoUnitLoop(dt);
 	UpdateSelectionRect();
 
-	if (App->sceneMap->renderForces)
+	if (App->sceneAI->renderForces)
 		DrawDebug();
 
 	return true;
@@ -62,7 +62,6 @@ bool M_EntityManager::PostUpdate(float dt)
 		{
 			item2 = item->next;
 			deleteUnit(item);
-
 		}
 	}
 	return true;
@@ -84,7 +83,6 @@ void M_EntityManager::DoUnitLoop(float dt)
 {
 	C_List_item<Unit*>* item = NULL;
 	item = unitList.start;
-
 
 	while (item)
 	{
@@ -113,16 +111,29 @@ void M_EntityManager::DoUnitLoop(float dt)
 
 		//Unit update
 		if (!item->data->Update(dt))
-		{
 			unitsToDelete.add(item->data);
-		}
+
 		item = item->next;
 	}
+
 	if (selectUnits)
 	{
-
 		selectionRect.w = selectionRect.h = 0;
 		selectUnits = false;
+		/*
+		if (selectedUnits.count() != 0)
+		{
+			uint min = selectedUnits.start->data->team;
+
+			for (item = selectedUnits.start; item; item = item->next)
+				min = (item->data->team < min ? item->data->team : min);
+
+			for (item = selectedUnits.start; item; item = item->next)
+			{
+				if (item->data->team != min)
+					selectedUnits.del(selectedUnits.At(selectedUnits.find(item->data)));
+			}
+		}*/
 	}
 }
 
@@ -190,13 +201,13 @@ void M_EntityManager::ManageInput()
 
 }
 
-Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type)
+Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, uint team)
 {
 	iPoint tile = App->map->WorldToMap(x, y);
 	bool isWalkable = App->pathFinding->IsWalkable(tile.x, tile.y);
 	if (isWalkable)
 	{
-		Unit* unit = new Unit(x, y);
+		Unit* unit = new Unit(x, y, team);
 		unit->SetType(type);
 
 		switch (type)
