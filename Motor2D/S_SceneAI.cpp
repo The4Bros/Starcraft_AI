@@ -56,7 +56,6 @@ bool S_SceneAI::Start()
 	debug_tex = App->tex->Load("textures/current_tile.png");
 	collision_tex = App->tex->Load("textures/collision_tile.png");
 	mapTexture = App->tex->Load("maps/unit_map.png");
-	mapTexture_wall = App->tex->Load("maps/unit_map_wall.png");
 
 	return true;
 }
@@ -81,10 +80,7 @@ bool S_SceneAI::Update(float dt)
 	ManageInput(dt);
 
 	SDL_Rect rect1 = { 0, 0, 0, 0 };
-	if (App->pathFinding->wallUp)
-		App->render->Blit(mapTexture_wall, &rect1, true);
-	else
-		App->render->Blit(mapTexture, &rect1, true);	
+	App->render->Blit(mapTexture, &rect1, true);
 
 	if (renderMap)
 		App->map->Draw();
@@ -166,11 +162,7 @@ void S_SceneAI::ManageInput(float dt)
 
 void S_SceneAI::LoadGUI()
 {
-	UI_Label* lab = App->gui->CreateUI_Label({ 100, 100, 0, 0 }, "Hello");
-	lab->SetColor(255, 0, 255);
-
-	UI_InputText* inp = App->gui->CreateUI_InputText(350, 350, "Hello! :D it's me", { 0, 0, 200, 200 }, 10, 10);
-	inp->AddListener(this);
+	
 }
 
 void S_SceneAI::OnGUI(GUI_EVENTS event, UI_Element* element)

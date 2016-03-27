@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bot.cpp" />
     <ClCompile Include="M_AI.cpp" />
     <ClCompile Include="Controlled.cpp" />
     <ClCompile Include="CVar.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="M_Console.cpp" />
     <ClCompile Include="M_PathFinding.cpp" />
     <ClCompile Include="j1PerfTimer.cpp" />
+    <ClCompile Include="StarcraftBot.cpp" />
     <ClCompile Include="S_SceneAI.cpp" />
     <ClCompile Include="j1Timer.cpp" />
     <ClCompile Include="Log.cpp" />
@@ -107,6 +109,7 @@
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bot.h" />
     <ClInclude Include="M_AI.h" />
     <ClInclude Include="Controlled.h" />
     <ClInclude Include="Entity.h" />
@@ -122,6 +125,7 @@
     <ClInclude Include="M_Map.h" />
     <ClInclude Include="M_PathFinding.h" />
     <ClInclude Include="j1PerfTimer.h" />
+    <ClInclude Include="StarcraftBot.h" />
     <ClInclude Include="S_SceneAI.h" />
     <ClInclude Include="j1Timer.h" />
     <ClInclude Include="C_DynArray.h" />
@@ -146,6 +150,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\Game\config.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -59,7 +59,6 @@ public:
 	SDL_Texture* collision_tex = NULL;
 
 	SDL_Texture* mapTexture = NULL;
-	SDL_Texture* mapTexture_wall = NULL;
 
 private:
 

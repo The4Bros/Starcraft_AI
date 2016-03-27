@@ -12,7 +12,7 @@
 
 M_EntityManager::M_EntityManager(bool start_enabled) : j1Module(start_enabled)
 {
-
+	name.create("entity_manager");
 }
 
 M_EntityManager::~M_EntityManager()
