@@ -55,7 +55,7 @@ bool S_SceneAI::Start()
 
 	debug_tex = App->tex->Load("textures/current_tile.png");
 	collision_tex = App->tex->Load("textures/collision_tile.png");
-	mapTexture = App->tex->Load("maps/unit_map.png");
+	mapTexture = App->tex->Load("maps/empty_map.png");
 
 	return true;
 }
@@ -152,6 +152,15 @@ void S_SceneAI::ManageInput(float dt)
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
 			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER, team);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			int x, y;
+			App->input->GetMousePosition(x, y);
+			iPoint p = App->render->ScreenToWorld(x, y);
+			p = App->map->WorldToMap(p.x, p.y);
+			p = App->map->MapToWorld(p.x, p.y);
+			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, BOT, team +1);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{

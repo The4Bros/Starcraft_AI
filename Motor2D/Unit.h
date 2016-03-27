@@ -11,6 +11,7 @@
 enum Unit_Type
 {
 	ARBITER = 0,
+	BOT
 };
 
 class UIBar;

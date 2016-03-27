@@ -21,7 +21,8 @@ M_EntityManager::~M_EntityManager()
 }
 bool M_EntityManager::PreStart(pugi::xml_node& node)
 {
-	entity_tex = App->tex->Load("graphics/protoss/units/arbiter.png");
+	entity_tex = App->tex->Load("graphics/protoss/units/plane.png");
+	bot_tex = App->tex->Load("graphics/protoss/units/plane_BOT.png");
 	unit_base = App->tex->Load("graphics/ui/o062.png");
 	path_tex = App->tex->Load("textures/path.png");
 	hpBar_empty = App->tex->Load("graphics/ui/hpbarempt.png");
@@ -251,6 +252,11 @@ Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, uint team)
 			unit->SetMovementType(FLYING);
 			unit->SetCollider({ 0, 0, 5 * 8, 5 * 8 });
 			}
+		case (BOT) :
+			{
+			unit->SetMovementType(FLYING);
+			unit->SetCollider({ 0, 0, 5 * 8, 5 * 8 });
+			}
 		}
 		unit->SetPriority(currentPriority++);
 		unit->Start();
@@ -384,6 +390,9 @@ SDL_Texture* M_EntityManager::GetTexture(Unit_Type type)
 	{
 	case (ARBITER):
 		return entity_tex;
+		break;
+	case (BOT) :
+		return bot_tex;
 		break;
 	default:
 		return NULL;

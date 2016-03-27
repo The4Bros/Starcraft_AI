@@ -58,6 +58,7 @@ public:
 	C_List<Unit*> unitsToDelete;
 
 	SDL_Texture* entity_tex;
+	SDL_Texture* bot_tex;
 	SDL_Texture* unit_base;
 	SDL_Texture* path_tex;
 	SDL_Texture* hpBar_empty;
