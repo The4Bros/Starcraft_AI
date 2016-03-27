@@ -2,13 +2,10 @@
 #define __M_AI_H__
 
 #include "j1Module.h"
-#include "Bot.h"
-#include "StarcraftBot.h"
 #include <map>
 #include "SimpleCVar.h"
-
-class Bot;
-class StarcraftBot;
+#include "Bot.h"
+#include "StarcraftBot.h"
 
 class M_AI : public j1Module
 {
