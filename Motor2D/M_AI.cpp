@@ -34,8 +34,6 @@ bool M_AI::PreStart(pugi::xml_node& node)
 	std::pair<const char*, std::map<const char*, std::map<const char*, SimpleCVar>>> ly3_pair;
 	std::pair<const char*, std::map<const char*, SimpleCVar>> ly2_pair;
 	std::pair<const char*, SimpleCVar> ly1_pair;
-	bool _bool;
-	int _int = -1;
 
 	for (pugi::xml_node camp = node.first_child(); camp; camp = camp.next_sibling())
 	{
@@ -98,9 +96,6 @@ bool M_AI::PostUpdate(float dt)
 {
 	if (deadBotList.count() > 0)
 		deadBotList.clear();
-
-	if (deadStarcraftBotList.count() > 0)
-		deadStarcraftBotList.clear();
 
 	return true;
 }

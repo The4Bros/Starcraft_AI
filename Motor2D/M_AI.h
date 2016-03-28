@@ -35,9 +35,8 @@ public:
 
 	C_List<Bot*> botList;
 	C_List<StarcraftBot*> starcraftBotList;
-
 	C_List<Bot*> deadBotList;
-	C_List<StarcraftBot*> deadStarcraftBotList;
+
 private:
 
 	bool AddBot(Bot* bot);

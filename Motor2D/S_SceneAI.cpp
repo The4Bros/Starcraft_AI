@@ -109,27 +109,7 @@ void S_SceneAI::ManageInput(float dt)
 	{
 		//Enable / Disable forces debug
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_UP)
-		{
 			renderForces = !renderForces;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-			App->render->camera.y += (int)floor(200.0f * dt);
-
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-			App->render->camera.y -= (int)floor(200.0f * dt);
-
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-			App->render->camera.x += (int)floor(200.0f * dt);
-
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-			App->render->camera.x -= (int)floor(200.0f * dt);
-
-		if (App->render->camera.x > 0)
-			App->render->camera.x = 0;
-
-		if (App->render->camera.y > 0)
-			App->render->camera.y = 0;
 
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE) == KEY_DOWN)
 		{
@@ -138,7 +118,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			App->AI->CreateBot(p.x + 4, p.y + 4, unit_1, team);
+			App->entityManager->CreateUnit(p.x + 4, p.y + 4, unit_1, team);
 		}
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
@@ -151,7 +131,7 @@ void S_SceneAI::ManageInput(float dt)
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{
-			App->entityManager->SendNewPath(currentTile_x, currentTile_y);
+			//App->entityManager->SendNewPath(currentTile_x, currentTile_y);
 		}
 	}
 }

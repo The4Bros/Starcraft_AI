@@ -340,11 +340,7 @@ void M_EntityManager::SendNewPath(int x, int y)
 					//Distance from rectangle position to unit position
 					iPoint posFromRect = { 0, 0 };
 					
-					//TODO 5: Send a different path for each unit:
-					//Find unit position from selection rect, then add it to the destination rect position and get the path
-						//If the destination position is a non-walkable tile, find a path to the tile clicked
-					
-					//--------------------------------------------------------------
+					//Send a different path for each unit:
 					posFromRect.x = selectedUnits[i]->GetPosition().x - groupRect.x;
 					posFromRect.y = selectedUnits[i]->GetPosition().y - groupRect.y;
 
@@ -366,24 +362,16 @@ void M_EntityManager::SendNewPath(int x, int y)
 				}
 				else
 				{
-					//TODO 4: Find a path from unit tile to clicked tile for each selected unit
-						//Remember: App->pathfinding->GetNewPath sends a path from A to B
-						//unit->SendNewPath to send a path to a unit
 					C_DynArray<iPoint> newPath;
-					
-					//---------------------------------------------------------
 					fPoint unitPos = selectedUnits[i]->GetPosition();
 					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
 					iPoint dstTile = { x, y };
 					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
 					selectedUnits[i]->SetNewPath(newPath);
-					//--------------------------------------------------------
-					
 				}
 			}
 		}
 	}
-		//---------------------------------------------------------------------
 	else
 	{
 		for (uint i = 0; i < selectedUnits.count(); i++)

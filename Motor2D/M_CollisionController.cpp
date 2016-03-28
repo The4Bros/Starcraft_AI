@@ -77,22 +77,16 @@ void M_CollisionController::DoUnitLoop()
 		{
 			if (mapChanged)
 			{
-				//TODO 6: If a unit is moving, check if any tile from the path is in a non-walkable tile
-				//If so, repath.
-				
 				bool stop = false;
 				for (int n = App->entityManager->unitList[i]->currentNode; n < App->entityManager->unitList[i]->path.Count(); n++)
 				{
 					if (!App->pathFinding->IsWalkable(unit->path[n].x, unit->path[n].y))
 					{
-						//----------------------------------------------------
 						stop = true;
 						C_DynArray<iPoint> newPath;
 						iPoint unitPos = App->map->WorldToMap(unit->GetPosition().x, unit->GetPosition().y);
 						App->pathFinding->GetNewPath(unitPos, unit->path[unit->path.Count() - 1], newPath);
 						unit->SetNewPath(newPath);
-						//-----------------------------------------------------
-						
 					}
 				}
 				
@@ -106,16 +100,11 @@ void M_CollisionController::DoUnitLoop()
 			if (!App->pathFinding->IsWalkable(unitPos.x, unitPos.y))
 			{
 				LOG("Unit in no-walkable tile");
-				//TODO 7: If the unit is in a non-walkable tile find a nearby walkable tile and repath
-					//Tip: Use "FindClosestWalkable"
-				
-				//--------------------------------------------------------
+				//: If the unit is in a non-walkable tile find a nearby walkable tile and repath
 				iPoint tile = FindClosestWalkable(unitPos.x, unitPos.y);
 				iPoint dst = App->map->MapToWorld(tile.x, tile.y);
 				unit->SetTarget(dst.x, dst.y);
 				unit->path.Clear();
-				//--------------------------------------------------------
-				
 			}
 			else
 			{
@@ -124,10 +113,7 @@ void M_CollisionController::DoUnitLoop()
 				{
 					if (i != n  && App->entityManager->unitList[n]->targetReached)
 					{
-						//TODO 8: If two units are colliding, separe them
-							//Tip: Use "DoUnitsIntersect" and "SplitUnits"
-						
-						//---------------------------------------------------
+						//: If two units are colliding, separe them
 						Unit* unit2 = App->entityManager->unitList[n];
 						if (DoUnitsIntersect(unit, unit2))
 						{
@@ -139,8 +125,6 @@ void M_CollisionController::DoUnitLoop()
 								stop = true;
 							}
 						}
-						//----------------------------------------------------
-						
 					}
 				}
 			}
