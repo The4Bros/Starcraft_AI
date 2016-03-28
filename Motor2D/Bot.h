@@ -23,12 +23,12 @@ public:
 	Bot(int x, int y, Unit_Type type, float team);
 	~Bot();
 
-	bool Update();
+	virtual bool Update(float dt);
 	bool FixedUpdate();
 	bool SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats, int index);
 
 	fPoint GetPos();
-
+	bool CheckForEnemies();
 	void OnAttack(int damage, Bot* attacker);
 	void OnDeath();
 

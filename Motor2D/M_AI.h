@@ -19,7 +19,7 @@ public:
 	
 	bool PreStart(pugi::xml_node& node);
 	//bool Start();
-	//bool Update(float dt);
+	bool Update(float dt);
 	bool PostUpdate(float dt);
 	bool CleanUp();
 

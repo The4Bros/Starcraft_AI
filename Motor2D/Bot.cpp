@@ -20,7 +20,7 @@ Bot::~Bot()
 
 }
 
-bool Bot::Update()
+ bool Bot::Update(float dt)
 {
 	bool ret = true;
 
@@ -30,10 +30,11 @@ bool Bot::Update()
 		updateTimer.Start();
 	}
 		
-
+ 
 	switch (state)
 	{
 	case BotState::idle:
+
 
 		break;
 
@@ -104,3 +105,10 @@ void Bot::OnAttack(int damage, Bot* attacker)
 	}
 }
 
+bool Bot::CheckForEnemies(){
+
+	
+
+
+	return true;
+}

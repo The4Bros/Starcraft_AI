@@ -76,7 +76,24 @@ bool M_AI::PreStart(pugi::xml_node& node)
 
 	return true;
 }
+bool M_AI::Update(float dt)
+{
+	C_List_item<Bot*>* item = NULL;
+	item = botList.start;
 
+	while (item)
+	{
+
+		if (!item->data->Update(dt))
+			deadBotList.add(item->data);
+
+		item = item->next;
+
+
+	}
+
+	return true;
+}
 bool M_AI::PostUpdate(float dt)
 {
 	if (deadBotList.count() > 0)
@@ -104,7 +121,7 @@ Bot* M_AI::CreateBot(int x, int y, Unit_Type type, float team)
 
 	std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
 	App->AI->GetEntityData(type, &entity_stats);
-
+	AddBot(ret);
 	ret->SetStats(entity_stats, 4);
 
 	return ret;
