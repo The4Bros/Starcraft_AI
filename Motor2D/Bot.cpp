@@ -2,6 +2,7 @@
 #include "j1App.h"
 #include "M_EntityManager.h"
 #include "M_AI.h"
+#include "Unit.h"
 
 Bot::Bot()
 {
@@ -29,12 +30,14 @@ Bot::~Bot()
 		FixedUpdate();
 		updateTimer.Start();
 	}
-		
+	if (unit){
+		unit->SetTarget(0, 0);
+	}
  
 	switch (state)
 	{
 	case BotState::idle:
-
+		CheckForEnemies();
 
 		break;
 
@@ -106,9 +109,47 @@ void Bot::OnAttack(int damage, Bot* attacker)
 }
 
 bool Bot::CheckForEnemies(){
+	/*
+	C_List_item<Unit*>* item = NULL;
+	item = App->entityManager->unitList.start;
+	C_List<Unit*> OtherTeamList;
 
-	
+
+	while (item)
+	{
+		if (item->data->team != unit->team)
+			OtherTeamList.add(item->data);
+
+		item = item->next;
+	}
+
+	C_List_item<Unit*>* item2 = NULL;
+	item2 = OtherTeamList.start;
+
+	while (item2)
+	{
+		if (EnemyOnUnitRange(item2->data, unit))
+		{
+			target = item2->data;
+			return true;
+		}
+
+		item = item->next;
+	}
+
+	*/
+
+	return false;
+}
 
 
-	return true;
+bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2)
+{
+	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
+	return (distance.GetModule() < 100);
+}
+
+void Bot::SetState(BotState newstate)
+{
+	state = newstate;
 }
