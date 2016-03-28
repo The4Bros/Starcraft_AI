@@ -68,11 +68,21 @@ public:
 
 	void Damage(int damage, DamageType type);
 
+private:
+
+	void SetPosToTarget();
+
 public:
 
 	//Collision variables
 	int priority;
 	int colRadius = 5 * 4;
+
+	C_DynArray<iPoint> path;
+	iPoint target;
+	int currentNode = 0;
+	bool targetReached = true;
+	float team;
 
 private:
 
@@ -90,11 +100,7 @@ private:
 
 public:
 
-	C_DynArray<iPoint> path;
-	iPoint target;
-	int currentNode = 0;
-	bool targetReached = true;
-	float team;
+	
 
 };
 

@@ -1,18 +1,16 @@
 #include <stdlib.h>
-
 #include "Unit.h"
 #include "Entity.h"
 #include "Controlled.h"
-
 #include "j1App.h"
-
 #include "M_Render.h"
 #include "M_Map.h"
 #include "M_EntityManager.h"
 #include "UI_Element.h"
 #include "M_PathFinding.h"
-
 #include "S_SceneAI.h"
+#include <math.h>
+#include <cmath>
 
 Unit::Unit() :Controlled()
 {
@@ -98,19 +96,14 @@ bool Unit::UpdateVelocity(float dt)
 //Get the desired velocity: target position - current position
 void Unit::GetDesiredVelocity()
 {
-	//TODO 1: Get the velocity we are looking for.
-		//Remember: velocity module must be "maxSpeed"
-		//Set velocity position to entity position for debug
 	C_Vec2<float> velocity = { 0, 0 };
-	
-	//-----------------------------------
+
 	velocity.x = (target.x - position.x);
 	velocity.y = (target.y - position.y);
 	velocity.position = position;
 
 	velocity.Normalize();
 	velocity *= maxSpeed;
-	//----------------------------------
 	
 	desiredVelocity = velocity;
 }
@@ -123,10 +116,6 @@ bool Unit::Move(float dt)
 	//Continuous evaluation
 	if (App->entityManager->continuous)
 	{
-		//TODO 3: Split the velocity in parts and check for the target
-		
-		//-------------------------------------------------------
-		//Splitting the velocity into smaller pieces to check if the unit reaches the target
 		float module = vel.GetModule();
 		int steps = (int)floor(vel.GetModule() / targetRadius);
 		C_Vec2<float> velStep = (vel.GetNormal() * targetRadius);
@@ -137,30 +126,31 @@ bool Unit::Move(float dt)
 			position.x += velStep.x;
 			position.y += velStep.y;
 			if (isTargetReached())
+			{
+				SetPosToTarget();
 				ret = false;
+			}
 		}
 		if (ret)
 		{
 			position.x += rest.x;
 			position.y += rest.y;
-			if (isTargetReached())
-				ret = false;
+			
+				
 		}
-		//-------------------------------------------------------
 		
 	}
 	//Normal movement
 	else
 	{
-		//TODO 1: Move the unit with the velocity obtained previously
-		
-		//------------------------------------------------------
 		position.x += vel.x;
 		position.y += vel.y;
-		//-----------------------------------------------------
 		
 		if (isTargetReached())
+		{
+			SetPosToTarget();
 			ret = false;
+		}
 	}
 
 	currentVelocity.position = desiredVelocity.position = position;
@@ -225,24 +215,13 @@ bool Unit::GetNewTarget()
 
 bool Unit::isTargetReached()
 {
-	//TODO 2: Check if we have reached the target
-	
-	//------------------------------------------------------
 	C_Vec2<float> vec;
 	vec.x = target.x - position.x;
 	vec.y = target.y - position.y;
 	float distance = vec.GetModule();
-	if (distance < targetRadius)
-	{
-		position.x = (float)target.x;
-		position.y = (float)target.y;
-		currentVelocity.position = desiredVelocity.position = position;
-		return true;
-	}
-	//-----------------------------------------------------
-	
-	return false;
-} 
+
+	return (distance < targetRadius);
+}
 
 bool Unit::isAngleReached()
 {
@@ -429,4 +408,9 @@ void Unit::Damage(int damage, DamageType type)
 	}
 }
 
-
+void Unit::SetPosToTarget()
+{
+	position.x = (float)target.x;
+	position.y = (float)target.y;
+	currentVelocity.position = desiredVelocity.position = position;
+}
