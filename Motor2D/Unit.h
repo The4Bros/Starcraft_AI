@@ -55,6 +55,7 @@ public:
 	void SetMaxSpeed(float speed);
 	void SetPriority(int priority);
 	bool SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats);
+	void SetDirection(fPoint dir);
 
 	//Getters
 	void GetTextureRect(SDL_Rect&, SDL_RendererFlip&) const;

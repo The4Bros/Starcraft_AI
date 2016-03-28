@@ -30,19 +30,18 @@ Bot::~Bot()
 		FixedUpdate();
 		updateTimer.Start();
 	}
-	if (unit){
-		unit->SetTarget(0, 0);
-	}
+	
  
 	switch (state)
 	{
 	case BotState::idle:
-		CheckForEnemies();
-
+		LOG("IDLE STATE");
+		CheckForEnemies(200);
 		break;
 
 	case BotState::attack:
-
+		TargetOnRange(300);
+		LOG("ATTACK STATE");
 		break;
 
 	case BotState::kite:
@@ -108,8 +107,8 @@ void Bot::OnAttack(int damage, Bot* attacker)
 	}
 }
 
-bool Bot::CheckForEnemies(){
-	/*
+bool Bot::CheckForEnemies(float range){
+	
 	C_List_item<Unit*>* item = NULL;
 	item = App->entityManager->unitList.start;
 	C_List<Unit*> OtherTeamList;
@@ -128,25 +127,70 @@ bool Bot::CheckForEnemies(){
 
 	while (item2)
 	{
-		if (EnemyOnUnitRange(item2->data, unit))
+		if (EnemyOnUnitRange(item2->data, unit,range))
 		{
+
 			target = item2->data;
+			SetState(attack);
 			return true;
 		}
 
-		item = item->next;
+		item2 = item2->next;
 	}
-
-	*/
-
 	return false;
 }
 
+bool Bot::TargetOnRange(float range)
+{
+	
+	if (EnemyOnUnitRange(target, unit, range))
+	{
+		if (EnemyOnUnitRange(target, unit, 20)){
+			unit->SetDirection(target->GetPosition());
+			target->Damage(1, normal);
+			return true;
+		}
+		FollowTarget();
+	
+		return true;
+	}
+	else
+	{
+		SetState(idle);
+		return false;
+	}
 
-bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2)
+}
+
+void Bot::FollowTarget()
+{
+	C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
+	if (distance.x > 0 &&  distance.y > 0)
+	{
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
+		
+	}
+	else if (distance.x > 0 && distance.y < 0)
+	{
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + 20), target->GetPosition().y + (target->colRadius + 20));
+	}
+	else if (distance.x < 0 && distance.y < 0)
+	{
+		
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y + (target->colRadius + 20));
+	}
+	else
+	{
+		
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
+	}
+	
+}
+
+bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2,float range)
 {
 	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
-	return (distance.GetModule() < 100);
+	return (distance.GetModule() < range + unit1->colRadius + unit2->colRadius);
 }
 
 void Bot::SetState(BotState newstate)

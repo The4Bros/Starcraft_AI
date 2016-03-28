@@ -421,3 +421,12 @@ void Unit::SetPosToTarget()
 	position.y = (float)target.y;
 	currentVelocity.position = desiredVelocity.position = position;
 }
+
+void Unit::SetDirection(fPoint dir)
+{
+	C_Vec2<float> dir_tmp;
+	dir_tmp.x = dir.x;
+	dir_tmp.y = dir.y;
+	
+}
+

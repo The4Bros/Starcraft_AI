@@ -28,8 +28,10 @@ public:
 	bool SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats, int index);
 
 	fPoint GetPos();
-	bool CheckForEnemies();
-	bool EnemyOnUnitRange(Unit* unit1, Unit* unit2);
+	bool CheckForEnemies(float range);
+	bool TargetOnRange(float range);
+	void FollowTarget();
+	bool EnemyOnUnitRange(Unit* unit1, Unit* unit2, float range);
 	void SetState(BotState newstate);
 	void OnAttack(int damage, Bot* attacker);
 	void OnDeath();
