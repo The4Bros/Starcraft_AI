@@ -3,6 +3,7 @@
 
 #include "j1Module.h"
 #include <map>
+#include "SimpleCVar.h"
 
 class Unit;
 enum Unit_Type;
@@ -24,24 +25,18 @@ public:
 
 	void ManageInput();
 
-	Unit* CreateUnit(int x, int y, Unit_Type, uint team);
-	Unit* CreateBot(int x, int y, Unit_Type, uint team);
-	Unit* CreateStarcraftBot(int x, int y, Unit_Type, uint team);
+	Unit* CreateUnit(int x, int y, Unit_Type type, float team);
 
-
+	bool deleteUnit(Unit* item);
 	bool deleteUnit(C_List_item<Unit*>* item);
-
 	bool IsUnitSelected(C_List_item<Unit*>*);
-
 	void SendNewPath(int x, int y);
+	void SendNewPath(int x, int y, C_List<Unit*> units);
 
-	SDL_Texture* GetTexture(Unit_Type);
-
-	//	bool addBuilding(Entity& _entity);
-	//	bool deleteBuilding();
+	SDL_Texture* GetTexture(Unit_Type type);
 
 	void DrawDebug();
-	//should be priv
+	
 public:
 	bool continuous = true;
 	bool smooth = false;
@@ -69,10 +64,11 @@ public:
 	//Collision variables
 	int currentPriority = 1;
 
+	float PlayerTeam = 1.0f;
+
 private:
 
 	void AddUnit(Unit* unit);
-	//C_List<Building*> buildingList;
 
 };
 

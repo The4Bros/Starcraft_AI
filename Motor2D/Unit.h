@@ -4,23 +4,32 @@
 #include "C_Point.h"
 #include "C_Vec2.h"
 #include "C_DynArray.h"
+#include "SimpleCVar.h"
+#include <map>
 
 #include "Entity.h"
 #include "Controlled.h"
 
+class UIBar;
+
 enum Unit_Type
 {
-	ARBITER = 0,
-	BOT
+	unit_1 = 0,
+	unit_2,
+	unit_3
 };
 
-class UIBar;
+enum DamageType
+{
+	normal,
+	splash,
+};
 
 class Unit : public Controlled
 {
 public:
 	Unit();
-	Unit(float x, float y, uint team);
+	Unit(float x, float y, float team);
 	Unit(fPoint);
 	~Unit();
 
@@ -44,6 +53,7 @@ public:
 	void SetType(Unit_Type _type);
 	void SetMaxSpeed(float speed);
 	void SetPriority(int priority);
+	bool SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats);
 
 	//Getters
 	void GetTextureRect(SDL_Rect&, SDL_RendererFlip&) const;
@@ -56,13 +66,17 @@ public:
 	void Draw();
 	void DrawDebug();
 
+	void Damage(int damage, DamageType type);
+
 public:
+
 	//Collision variables
 	int priority;
 	int colRadius = 5 * 4;
 
 private:
-	Unit_Type type = ARBITER;
+
+	Unit_Type type;
 
 	//Velocities
 	C_Vec2<float> currentVelocity = { 0, 0 };
@@ -75,11 +89,12 @@ private:
 
 
 public:
+
 	C_DynArray<iPoint> path;
 	iPoint target;
 	int currentNode = 0;
 	bool targetReached = true;
-	uint team;
+	float team;
 
 };
 

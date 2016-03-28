@@ -9,6 +9,8 @@
 #include "M_PathFinding.h"
 #include "S_SceneAI.h"
 #include "M_CollisionController.h"
+#include "SimpleCVar.h"
+#include "M_AI.h"
 
 M_EntityManager::M_EntityManager(bool start_enabled) : j1Module(start_enabled)
 {
@@ -236,36 +238,34 @@ void M_EntityManager::ManageInput()
 
 }
 
-Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, uint team)
+Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, float team)
 {
+	Unit* unit = NULL;
+
 	iPoint tile = App->map->WorldToMap(x, y);
 	bool isWalkable = App->pathFinding->IsWalkable(tile.x, tile.y);
-	if (isWalkable)
+
+	std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
+
+	if (isWalkable && App->AI->GetEntityData(type, &entity_stats))
 	{
 		Unit* unit = new Unit(x, y, team);
-		unit->SetType(type);
-
-		switch (type)
+		if (unit->SetStats(entity_stats))
 		{
-		case (ARBITER):
-			{
-			unit->SetMovementType(FLYING);
+			unit->SetType(type);
 			unit->SetCollider({ 0, 0, 5 * 8, 5 * 8 });
-			}
-		case (BOT) :
-			{
-			unit->SetMovementType(FLYING);
-			unit->SetCollider({ 0, 0, 5 * 8, 5 * 8 });
-			}
+			unit->SetPriority(currentPriority++);
+			unit->Start();
+			AddUnit(unit);
 		}
-		unit->SetPriority(currentPriority++);
-		unit->Start();
-
-		AddUnit(unit);
-		return unit;
+		else
+		{
+			delete[] unit;
+			unit = NULL;
+		}
 	}
-	return NULL;
 
+	return unit;
 }
 
 bool M_EntityManager::deleteUnit(C_List_item<Unit*>* item)
@@ -278,6 +278,16 @@ bool M_EntityManager::deleteUnit(C_List_item<Unit*>* item)
 	unitList.del(unitList.At(unitList.find(item->data)));
 	unitsToDelete.del(item);
 	return true;
+}
+
+bool M_EntityManager::deleteUnit(Unit* item)
+{
+	bool ret = true;
+
+	if (ret = (item != NULL))
+		ret = unitsToDelete.add(item);
+
+	return ret;
 }
 
 
@@ -384,20 +394,77 @@ void M_EntityManager::SendNewPath(int x, int y)
 	}
 }
 
+void M_EntityManager::SendNewPath(int x, int y, C_List<Unit*> units)
+{
+	if (App->pathFinding->allowPath)
+	{
+		//---------------------------------------------------------------------
+		if (App->pathFinding->IsWalkable(x, y))
+		{
+			for (uint i = 0; i < units.count(); i++)
+			{
+				if (groupMovement)
+				{
+					C_DynArray<iPoint> newPath;
+
+					//Cloning group rectangle to the destination point
+					iPoint Rcenter = App->map->MapToWorld(x, y);
+					destinationRect = { Rcenter.x - groupRect.w / 2, Rcenter.y - groupRect.h / 2, groupRect.w, groupRect.h };
+
+					//Distance from rectangle position to unit position
+					iPoint posFromRect = { 0, 0 };
+					posFromRect.x = units[i]->GetPosition().x - groupRect.x;
+					posFromRect.y = units[i]->GetPosition().y - groupRect.y;
+
+					iPoint dstTile = App->map->WorldToMap(destinationRect.x + posFromRect.x, destinationRect.y + posFromRect.y);
+
+					//Unit tile position
+					fPoint unitPos = units[i]->GetPosition();
+					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+
+					//If destination is not walkable, use the player's clicked tile
+					if (!App->pathFinding->IsWalkable(dstTile.x, dstTile.y))
+						dstTile = { x, y };
+
+					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
+					units[i]->SetNewPath(newPath);
+				}
+				else
+				{
+					C_DynArray<iPoint> newPath;
+
+					//---------------------------------------------------------
+					fPoint unitPos = units[i]->GetPosition();
+					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+					iPoint dstTile = { x, y };
+					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
+					units[i]->SetNewPath(newPath);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (uint i = 0; i < units.count(); i++)
+		{
+			iPoint dst = App->map->MapToWorld(x, y);
+			units[i]->SetTarget(dst.x, dst.y);
+		}
+	}
+}
+
 SDL_Texture* M_EntityManager::GetTexture(Unit_Type type)
 {
+	SDL_Texture* ret = NULL;
+
 	switch (type)
 	{
-	case (ARBITER):
-		return entity_tex;
-		break;
-	case (BOT) :
-		return bot_tex;
-		break;
-	default:
-		return NULL;
-		break;
+	case unit_1: ret = entity_tex;	break;
+	case unit_2: ret = bot_tex;		break;
+	case unit_3: ret = entity_tex;	break;
 	}
+
+	return ret;
 }
 
 void M_EntityManager::AddUnit(Unit* unit)

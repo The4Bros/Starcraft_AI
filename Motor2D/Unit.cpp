@@ -19,7 +19,7 @@ Unit::Unit() :Controlled()
 
 }
 
-Unit::Unit(float x, float y, uint team): team(team)
+Unit::Unit(float x, float y, float team) : team(team)
 {
 	position = { x, y };
 }
@@ -277,6 +277,27 @@ void Unit::SetPriority(int _priority)
 	priority = _priority;
 }
 
+bool Unit::SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats)
+{
+	bool ret = true;
+	std::map<const char*, SimpleCVar>::iterator it = entity_stats.second.begin();
+
+	if (!(ret = it->second.Read(&maxHP))) return ret;
+	maxHP = currHP;
+
+	it++;
+	if (!(ret = it->second.Read(&flying))) return ret;
+
+	it++;
+	if (!(ret = it->second.Read(&maxSpeed))) return ret;
+
+	it++;
+	if (!(ret = it->second.Read(&targetRadius))) return ret;
+
+	return ret;
+}
+
+
 void Unit::GetTextureRect(SDL_Rect& rect, SDL_RendererFlip& flip) const
 {
 	int rectX;
@@ -300,7 +321,6 @@ void Unit::GetTextureRect(SDL_Rect& rect, SDL_RendererFlip& flip) const
 	}
 	rect = { rectX, 0, 76, 76 };
 }
-
 Unit_Type Unit::GetType()
 {
 	return type;
@@ -395,3 +415,18 @@ void Unit::DrawDebug()
 		}
 	}
 }
+
+void Unit::Damage(int damage, DamageType type)
+{
+	switch (type)
+	{
+	case normal: currHP -= damage;
+		break;
+	case splash:
+		break;
+	default:
+		break;
+	}
+}
+
+

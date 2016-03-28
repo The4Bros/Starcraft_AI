@@ -3,9 +3,13 @@
 
 #include "j1Module.h"
 #include <map>
+#include "M_EntityManager.h"
 #include "SimpleCVar.h"
 #include "Bot.h"
 #include "StarcraftBot.h"
+
+class Bot;
+class StarcraftBot;
 
 class M_AI : public j1Module
 {
@@ -16,22 +20,28 @@ public:
 	bool PreStart(pugi::xml_node& node);
 	//bool Start();
 	//bool Update(float dt);
-	//bool PostUpdate(float dt);
+	bool PostUpdate(float dt);
 	bool CleanUp();
 
 	//void OnGUI(GUI_EVENTS, UI_Element*);
 	//void ManageInput();
 
-	Bot*			AddBot(const char* name, int x, int y);
-	StarcraftBot*	AddStarcraftBot(int x, int y);
+	Bot* CreateBot(int x, int y, Unit_Type type, float team);
+	StarcraftBot* CreateStarcraftBot(int x, int y);
 
+	bool GetEntityData(Unit_Type type, std::pair<const char*, std::map < const char*, SimpleCVar >>* stats);
+
+public:
+
+	C_List<Bot*> botList;
+	C_List<StarcraftBot*> starcraftBotList;
+
+	C_List<Bot*> deadBotList;
+	C_List<StarcraftBot*> deadStarcraftBotList;
 private:
 
-	bool Read(const char* arg1, const char* arg2, const char* arg3, float* value);
-	bool Read(const char* arg1, const char* arg2, const char* arg3, int* value);
-	bool Read(const char* arg1, const char* arg2, const char* arg3, char* value);
-	bool Read(const char* arg1, const char* arg2, const char* arg3, bool* value);
-	bool Read(const char* arg1, const char* arg2, char* name);
+	bool AddBot(Bot* bot);
+	bool AddStarcraftBot(StarcraftBot* starcraftBot);
 
 private:
 

@@ -34,6 +34,8 @@ bool M_AI::PreStart(pugi::xml_node& node)
 	std::pair<const char*, std::map<const char*, std::map<const char*, SimpleCVar>>> ly3_pair;
 	std::pair<const char*, std::map<const char*, SimpleCVar>> ly2_pair;
 	std::pair<const char*, SimpleCVar> ly1_pair;
+	bool _bool;
+	int _int = -1;
 
 	for (pugi::xml_node camp = node.first_child(); camp; camp = camp.next_sibling())
 	{
@@ -54,10 +56,10 @@ bool M_AI::PreStart(pugi::xml_node& node)
 				//stat value
 				switch (stat.attribute("type").as_int(0))
 				{
-				case 0: ly1_pair.second = SimpleCVar(stat.attribute("value").as_float());		break;
-				case 1: ly1_pair.second = SimpleCVar(stat.attribute("value").as_int());			break;
+				case 0:	ly1_pair.second = SimpleCVar(stat.attribute("value").as_float(0.0f));	break;
+				case 1: ly1_pair.second = SimpleCVar(stat.attribute("value").as_int(0));		break;
 				case 2: ly1_pair.second = SimpleCVar(stat.attribute("value").as_string(""));	break;
-				case 3: ly1_pair.second = SimpleCVar(stat.attribute("value").as_bool());		break;
+				case 3: ly1_pair.second = SimpleCVar(stat.attribute("value").as_bool(false));	break;
 				}
 
 				//add stat to entity
@@ -75,6 +77,17 @@ bool M_AI::PreStart(pugi::xml_node& node)
 	return true;
 }
 
+bool M_AI::PostUpdate(float dt)
+{
+	if (deadBotList.count() > 0)
+		deadBotList.clear();
+
+	if (deadStarcraftBotList.count() > 0)
+		deadStarcraftBotList.clear();
+
+	return true;
+}
+
 bool M_AI::CleanUp()
 {
 	bool ret = true;
@@ -85,95 +98,56 @@ bool M_AI::CleanUp()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-bool M_AI::Read(const char* arg1, const char* arg2, const char* arg3, float* value)
+Bot* M_AI::CreateBot(int x, int y, Unit_Type type, float team)
 {
-	bool ret = true;
-	SimpleCVar* var = NULL;
+	Bot* ret = new Bot(x, y, type, team);
 
-	try
-	{
-		var = &data.at(arg1).at(arg2).at(arg3);
-	}
-	catch (const std::out_of_range& oor)
-	{
-		ret = false;
-	}
+	std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
+	App->AI->GetEntityData(type, &entity_stats);
 
-	if (ret)
-		var->Read(value);
+	ret->SetStats(entity_stats, 4);
 
 	return ret;
 }
 
-bool M_AI::Read(const char* arg1, const char* arg2, const char* arg3, int* value)
+StarcraftBot* M_AI::CreateStarcraftBot(int x, int y)
 {
-	bool ret = true;
-	SimpleCVar* var = NULL;
-
-	try
-	{
-		var = &data.at(arg1).at(arg2).at(arg3);
-	}
-	catch (const std::out_of_range& oor)
-	{
-		ret = false;
-	}
-
-	if (ret)
-		var->Read(value);
+	StarcraftBot* ret = NULL;
 
 	return ret;
 }
 
-bool M_AI::Read(const char* arg1, const char* arg2, const char* arg3, char* value)
+bool M_AI::GetEntityData(Unit_Type type, std::pair<const char*, std::map < const char*, SimpleCVar >>* stats)
 {
 	bool ret = true;
-	SimpleCVar* var = NULL;
+	int count = int(type);
 
-	try
-	{
-		var = &data.at(arg1).at(arg2).at(arg3);
-	}
-	catch (const std::out_of_range& oor)
-	{
-		ret = false;
-	}
+	std::map<const char*, std::map<const char*, SimpleCVar>>::iterator it = data.begin()->second.begin();
+	for (int i = 0; i < count && it != data.begin()->second.end(); i++)
+		++it;
 
-	if (ret)
-		var->Read(value);
+	stats->first = it->first;
+	stats->second = it->second;
 
 	return ret;
 }
 
-bool M_AI::Read(const char* arg1, const char* arg2, const char* arg3, bool* value)
+bool M_AI::AddBot(Bot* bot)
 {
 	bool ret = true;
-	SimpleCVar* var = NULL;
 
-	try
-	{
-		var = &data.at(arg1).at(arg2).at(arg3);
-	}
-	catch (const std::out_of_range& oor)
-	{
-		ret = false;
-	}
+	if (ret = (bot != NULL))
+		botList.add(bot);
 
-	if (ret)
-		var->Read(value);
+	return ret;
+}
+
+bool M_AI::AddStarcraftBot(StarcraftBot* starcraftBot)
+{
+	bool ret = true;
+
+	if (ret = (starcraftBot != NULL))
+		starcraftBotList.add(starcraftBot);
 
 	return ret;
 }

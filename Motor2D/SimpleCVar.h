@@ -7,7 +7,14 @@
 
 #include <map>
 
-enum SCVarTypes;;
+enum SCVarTypes
+{
+	sc_float = 0,
+	sc_int,
+	sc_string,
+	sc_bool,
+	undefined
+};
 
 class SimpleCVar
 {
@@ -26,7 +33,7 @@ private:
 		bool boolVar;
 	} value;
 
-	SCVarTypes type;
+	SCVarTypes type = undefined;
 
 public:
 	void Set(float newValue);

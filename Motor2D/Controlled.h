@@ -10,12 +10,6 @@
 class UI_ProgressBar;
 class UI_Image;
 
-enum Unit_Movement_Type
-{
-	GROUND,
-	FLYING,
-};
-
 class Controlled : public Entity
 {
 public:
@@ -30,24 +24,22 @@ public:
 	virtual void DrawDebug();
 
 	void SetHP(int newHP);
-	void SetMovementType(Unit_Movement_Type type);
+	void SetFlying(bool fly);
 
 	int GetHP() const;
+	void Damage(int damage);
 
 	//HP controllers
 	virtual void CreateBar();
 	void UpdateBarState();
 	void UpdateBarPosition();
 	void UpdateBarTexture();
-private:
-
-public:
 
 protected:
 	int maxHP = 100;
 	int currHP = 100;
 
-	Unit_Movement_Type movementType = GROUND;
+	bool flying = false;
 	UI_Image* HPBar_Empty;
 	UI_ProgressBar* HPBar_Filled;
 

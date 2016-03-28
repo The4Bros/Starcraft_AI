@@ -2,14 +2,6 @@
 #include "Defs.h"
 #include "Log.h"
 
-enum SCVarTypes
-{
-	sc_float = 0,
-	sc_int,
-	sc_string,
-	sc_bool,
-};
-
 SimpleCVar::SimpleCVar(float _value) : type(sc_float)
 {
 	value.floatVar = _value;
@@ -27,7 +19,7 @@ SimpleCVar::SimpleCVar(char* _value) : type(sc_string)
 
 SimpleCVar::SimpleCVar(bool _value) : type(sc_bool)
 {
-	value.floatVar = _value;
+	value.boolVar = _value;
 }
 
 

@@ -16,6 +16,7 @@
 //#include "UIElements.h"
 //#include "M_Fonts.h"
 #include "M_Console.h"
+#include "M_AI.h"
 
 S_SceneAI::S_SceneAI(bool start_enabled) : j1Module(start_enabled)
 {
@@ -94,14 +95,6 @@ bool S_SceneAI::Update(float dt)
 	return true;
 }
 
-// Called each loop iteration
-bool S_SceneAI::PostUpdate()
-{
-	bool ret = true;
-
-	return ret;
-}
-
 // Called before quitting
 bool S_SceneAI::CleanUp()
 {
@@ -118,12 +111,6 @@ void S_SceneAI::ManageInput(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_UP)
 		{
 			renderForces = !renderForces;
-		}
-
-		//Enable / Disable unit render
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_UP)
-		{
-			renderUnits = !renderUnits;
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
@@ -151,7 +138,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, ARBITER, team);
+			App->AI->CreateBot(p.x + 4, p.y + 4, unit_1, team);
 		}
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
@@ -160,7 +147,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			unit = App->entityManager->CreateUnit(p.x + 4, p.y + 4, BOT, team +1);
+			App->AI->CreateBot(p.x + 4, p.y + 4, unit_2, team + 1);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{

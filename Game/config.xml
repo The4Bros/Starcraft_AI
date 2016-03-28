@@ -2,7 +2,7 @@
 
 <config>
   <app framerate_cap="">
-    <title>Pathfinding Test</title>
+    <title>AI Test</title>
     <organization>UPC</organization>
   </app>
 	
@@ -35,42 +35,51 @@
     <folder>maps/</folder>
   </map>
 
-  <user_data>
-    <user nickname ="Marc" password ="UPC"/>
-    <user nickname ="Ric" password = "UPC"/>
-  </user_data>
-
   <scene>
       <ui_label x="100" y="200" drag="true">This is a test</ui_label>
       <ui_label x="100" y="300" drag="true">This is the SECOND test</ui_label>
   </scene>
 
   <AI>
-    <camp name ="Entities">
+    <camp name ="entities">
       <entity name="ARBITER">
-        <attribute type="1" value="20">damage</attribute>
         <attribute type="1" value="150">hp</attribute>
+        <attribute type="3" value="true">flying</attribute>
         <attribute type="0" value="150.0">maxSpeed</attribute>
         <attribute type="0" value="2.0">targetRadius</attribute>
+        <attribute type="1" value="20">damage</attribute>
         <attribute type="0" value="10.0">sightRange</attribute>
         <attribute type="0" value="1.0">attackRange</attribute>
+        <attribute type="0" value="0.5">attackSpeed</attribute>
+        <attribute type="3" value="false">kites</attribute>
+        <attribute type="3" value="false">flees</attribute>
       </entity>
       <entity name="alien">
-        <attribute type="1" value="20">damage</attribute>
         <attribute type="1" value="150">hp</attribute>
+        <attribute type="3" value="true">flying</attribute>
         <attribute type="0" value="150.0">maxSpeed</attribute>
         <attribute type="0" value="2.0">targetRadius</attribute>
+        <attribute type="1" value="20">damage</attribute>
         <attribute type="0" value="10.0">sightRange</attribute>
         <attribute type="0" value="1.0">attackRange</attribute>
+        <attribute type="0" value="0.5">attackSpeed</attribute>
+        <attribute type="3" value="false">kites</attribute>
+        <attribute type="3" value="false">flees</attribute>
       </entity>
       <entity name="robot">
-        <attribute type="1" value="20">damage</attribute>
         <attribute type="1" value="150">hp</attribute>
+        <attribute type="3" value="true">flying</attribute>
         <attribute type="0" value="150.0">maxSpeed</attribute>
         <attribute type="0" value="2.0">targetRadius</attribute>
+        <attribute type="1" value="20">damage</attribute>
         <attribute type="0" value="10.0">sightRange</attribute>
         <attribute type="0" value="1.0">attackRange</attribute>
+        <attribute type="0" value="0.5">attackSpeed</attribute>
+        <attribute type="3" value="false">kites</attribute>
+        <attribute type="3" value="false">flees</attribute>
       </entity>
+    </camp>
+    <camp name ="Behaviours">
     </camp>
   </AI>
   

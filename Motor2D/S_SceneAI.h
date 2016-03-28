@@ -29,9 +29,6 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
-	// Called before all Updates
-	bool PostUpdate();
-
 	// Called before quitting
 	bool CleanUp();
 
@@ -51,18 +48,16 @@ public:
 	iPoint endTile;
 
 	bool renderUnits = true;
-	bool renderForces = true;
+	bool renderForces = false;
 	bool renderMap = false;
 
-	Unit* unit;
 	SDL_Texture* debug_tex = NULL;
 	SDL_Texture* collision_tex = NULL;
-
 	SDL_Texture* mapTexture = NULL;
 
 private:
 
-	uint team;
+	float team;
 
 #pragma region Commands
 
