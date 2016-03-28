@@ -249,7 +249,7 @@ Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, float team)
 
 	if (isWalkable && App->AI->GetEntityData(type, &entity_stats))
 	{
-		Unit* unit = new Unit(x, y, team);
+		unit = new Unit(x, y, team);
 		if (unit->SetStats(entity_stats))
 		{
 			unit->SetType(type);
