@@ -241,6 +241,13 @@ void Unit::SetTarget(int x, int y)
 	targetReached = false;
 }
 
+void Unit::Stop()
+{
+	target.x = position.x;
+	target.y = position.y;
+	targetReached = true;
+}
+
 void Unit::SetType(Unit_Type _type)
 {
 	type = _type;

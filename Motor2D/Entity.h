@@ -6,7 +6,6 @@
 
 class Entity
 {
-	//Public methods
 public:
 
 	Entity();
@@ -22,17 +21,16 @@ public:
 	void SetPosition(float, float);
 	void SetPosition(fPoint);
 	void SetCollider(SDL_Rect rect);
+
 	//Get methods
 	fPoint GetPosition() const;
 	SDL_Rect GetCollider() const;
 
-	//Private methods
-private:
-
-	//Public properties
 public:
+
 	bool selected = false;
-	//Private properties
+
+
 protected:
 	fPoint position = { 0, 0 };
 	SDL_Rect collider;

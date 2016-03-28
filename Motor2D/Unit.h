@@ -42,6 +42,7 @@ public:
 
 	bool Rotate(float dt);
 	bool Move(float dt);
+	void Stop();
 
 	bool GetNewTarget();
 	bool isTargetReached();
@@ -96,11 +97,6 @@ private:
 	float maxSpeed =  150.0f; //Big max speed could get bugged
 	float rotationSpeed = 360.0f; //Used as angles / seconds
 	float targetRadius = 2.0f;
-
-
-public:
-
-	
 
 };
 
