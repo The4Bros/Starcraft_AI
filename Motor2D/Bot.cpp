@@ -149,20 +149,33 @@ bool Bot::TargetOnRange(float range)
 	if (EnemyOnUnitRange(target, unit, range))
 	{
 		if (EnemyOnUnitRange(target, unit, 20)){
+
 			unit->SetDirection(target->GetPosition());
 			target->Hit(1, normal);
 			return true;
 		}
+		else if (target->GetHP() > 0)
+		{
 		FollowTarget();
-	
 		return true;
+		}
+		else
+		{
+			target = NULL;
+			SetState(idle);
+			return false;
+		}
+		
+		
 	}
 	else
 	{
+		target = NULL;
 		SetState(idle);
 		return false;
 	}
 
+	
 }
 
 void Bot::FollowTarget()

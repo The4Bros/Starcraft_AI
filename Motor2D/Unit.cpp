@@ -27,7 +27,9 @@ Unit::Unit(fPoint pos)
 }
 
 Unit::~Unit()
-{}
+{
+	
+}
 
 bool Unit::Start()
 {
@@ -61,6 +63,10 @@ bool Unit::Update(float dt)
 	if (targetReached)
 	{
 		GetNewTarget();
+	}
+	if (GetHP() <= 0)
+	{
+		ret = false;
 	}
 
 	UpdateBarPosition();
