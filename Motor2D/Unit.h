@@ -68,7 +68,7 @@ public:
 	void Draw();
 	void DrawDebug();
 
-	void Damage(int damage, DamageType type);
+	void Hit(int damage, DamageType type);
 
 private:
 

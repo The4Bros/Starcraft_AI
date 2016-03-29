@@ -33,6 +33,7 @@ public:
 	void FollowTarget();
 	bool EnemyOnUnitRange(Unit* unit1, Unit* unit2, float range);
 	void SetState(BotState newstate);
+
 	void OnAttack(int damage, Bot* attacker);
 	void OnDeath();
 

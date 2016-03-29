@@ -27,7 +27,7 @@ public:
 	void SetFlying(bool fly);
 
 	int GetHP() const;
-	void Damage(int damage);
+	void Hit(int damage);
 
 	//HP controllers
 	virtual void CreateBar();

@@ -76,19 +76,33 @@ bool M_AI::PreStart(pugi::xml_node& node)
 }
 bool M_AI::Update(float dt)
 {
-	C_List_item<Bot*>* item = NULL;
-	item = botList.start;
-
-	while (item)
+	if (botList.count() > 0)
 	{
+		C_List_item<Bot*>* bot = NULL;
+		bot = botList.start;
 
-		if (!item->data->Update(dt))
-			deadBotList.add(item->data);
-
-		item = item->next;
-
-
+		while (bot)
+		{
+			if (!bot->data->Update(dt))
+				deadBotList.add(bot->data);
+			bot = bot->next;
+		}
 	}
+
+	if (starcraftBotList.count() > 0)
+	{
+		C_List_item<StarcraftBot*>* starcraftBot = NULL;
+		starcraftBot = starcraftBotList.start;
+
+		while (starcraftBot)
+		{
+			if (!starcraftBot->data->Update(dt))
+				deadStarcraftBotList.add(starcraftBot->data);
+			starcraftBot = starcraftBot->next;
+		}
+	}
+
+	
 
 	return true;
 }
@@ -96,6 +110,9 @@ bool M_AI::PostUpdate(float dt)
 {
 	if (deadBotList.count() > 0)
 		deadBotList.clear();
+
+	if (deadStarcraftBotList.count() > 0)
+		deadStarcraftBotList.clear();
 
 	return true;
 }
@@ -105,6 +122,10 @@ bool M_AI::CleanUp()
 	bool ret = true;
 
 	data.clear();
+	deadBotList.clear();
+	deadStarcraftBotList.clear();
+	botList.clear();
+	starcraftBotList.clear();
 
 	return ret;
 }

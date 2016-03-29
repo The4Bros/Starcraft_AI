@@ -402,7 +402,7 @@ void Unit::DrawDebug()
 	}
 }
 
-void Unit::Damage(int damage, DamageType type)
+void Unit::Hit(int damage, DamageType type)
 {
 	switch (type)
 	{

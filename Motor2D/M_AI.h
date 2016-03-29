@@ -35,6 +35,8 @@ public:
 
 	C_List<Bot*> botList;
 	C_List<StarcraftBot*> starcraftBotList;
+
+	C_List<StarcraftBot*> deadStarcraftBotList;
 	C_List<Bot*> deadBotList;
 
 private:

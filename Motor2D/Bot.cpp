@@ -25,6 +25,9 @@ Bot::~Bot()
 {
 	bool ret = true;
 
+	if (unit->GetHP() <= 0)
+		return false;
+
 	if (fixedUpdateSeconds <= updateTimer.ReadSec())
 	{
 		FixedUpdate();
@@ -98,7 +101,7 @@ fPoint Bot::GetPos()
 
 void Bot::OnAttack(int damage, Bot* attacker)
 {
-	unit->Damage(damage, normal);
+	unit->Hit(damage, normal);
 
 	if (unit->GetHP() <= 0)
 	{
@@ -147,7 +150,7 @@ bool Bot::TargetOnRange(float range)
 	{
 		if (EnemyOnUnitRange(target, unit, 20)){
 			unit->SetDirection(target->GetPosition());
-			target->Damage(1, normal);
+			target->Hit(1, normal);
 			return true;
 		}
 		FollowTarget();
