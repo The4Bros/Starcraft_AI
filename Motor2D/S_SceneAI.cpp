@@ -131,7 +131,7 @@ void S_SceneAI::ManageInput(float dt)
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{
-			//App->entityManager->SendNewPath(currentTile_x, currentTile_y);
+			App->entityManager->SendNewPath(currentTile_x, currentTile_y);
 		}
 	}
 }

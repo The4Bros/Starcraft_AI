@@ -11,6 +11,8 @@ Bot::Bot()
 Bot::Bot(int x, int y, Unit_Type type, float team)
 {
 	unit = App->entityManager->CreateUnit(x, y, type, team);
+	initialPos.x = x;
+	initialPos.y = y;
 	target = NULL;
 	targetLastPos.SetToZero();
 	updateTimer.Start();
@@ -48,11 +50,13 @@ Bot::~Bot()
 		break;
 
 	case BotState::kite:
-
+		KiteFromEnemy(30);
+		LOG("KITE STATE");
 		break;
 
 	case BotState::flee:
-
+		FleeFromEnemies();
+		LOG("FLEE STATE");
 		break;
 	}
 
@@ -116,7 +120,6 @@ bool Bot::CheckForEnemies(float range){
 	item = App->entityManager->unitList.start;
 	C_List<Unit*> OtherTeamList;
 
-
 	while (item)
 	{
 		if (item->data->team != unit->team)
@@ -132,7 +135,6 @@ bool Bot::CheckForEnemies(float range){
 	{
 		if (EnemyOnUnitRange(item2->data, unit,range))
 		{
-
 			target = item2->data;
 			SetState(attack);
 			return true;
@@ -146,18 +148,35 @@ bool Bot::CheckForEnemies(float range){
 bool Bot::TargetOnRange(float range)
 {
 	
+	if (App->entityManager->unitList.find(target) == -1)
+	{
+		target = NULL;
+		SetState(idle);
+		return false;
+	}
+	if (unit->GetHP() < 20)
+	{
+		SetState(flee);
+		return false;
+	}
+
 	if (EnemyOnUnitRange(target, unit, range))
 	{
-		if (EnemyOnUnitRange(target, unit, 20)){
+		if (EnemyOnUnitRange(target, unit, 30)){
 
+			if (EnemyOnUnitRange(target, unit, 10))
+			{
+				SetState(kite);
+				return true;
+			}
 			unit->SetDirection(target->GetPosition());
 			target->Hit(1, normal);
 			return true;
 		}
-		else if (target->GetHP() > 0)
+		else if (target->GetHP() > 0 && target != NULL)
 		{
-		FollowTarget();
-		return true;
+			FollowTarget();
+			return true;
 		}
 		else
 		{
@@ -165,8 +184,6 @@ bool Bot::TargetOnRange(float range)
 			SetState(idle);
 			return false;
 		}
-		
-		
 	}
 	else
 	{
@@ -175,7 +192,6 @@ bool Bot::TargetOnRange(float range)
 		return false;
 	}
 
-	
 }
 
 void Bot::FollowTarget()
@@ -184,7 +200,6 @@ void Bot::FollowTarget()
 	if (distance.x > 0 &&  distance.y > 0)
 	{
 		unit->SetTarget(target->GetPosition().x - (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
-		
 	}
 	else if (distance.x > 0 && distance.y < 0)
 	{
@@ -192,21 +207,59 @@ void Bot::FollowTarget()
 	}
 	else if (distance.x < 0 && distance.y < 0)
 	{
-		
 		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y + (target->colRadius + 20));
 	}
 	else
 	{
-		
 		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
 	}
 	
 }
 
+bool Bot::KiteFromEnemy(int attackrange)
+{
+	C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
+	if (distance.x > 0 && distance.y > 0)
+	{
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+	}
+	else if (distance.x > 0 && distance.y < 0)
+	{
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+	}
+	else if (distance.x < 0 && distance.y < 0)
+	{
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+	}
+	else
+	{
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+	}
+	SetState(attack);
+	return true;
+}
+
+bool Bot::FleeFromEnemies()
+{
+	unit->SetTarget(initialPos.x , initialPos.y);
+	flees = true;
+	SetState(idle);
+	return true;
+}
+
+
+
+
 bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2,float range)
 {
 	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
 	return (distance.GetModule() < range + unit1->colRadius + unit2->colRadius);
+}
+
+C_Vec2<float> Bot::DistanceWithTarget()
+{
+	 C_Vec2<float> distance = { unit->GetPosition().x - target->GetPosition().x, unit->GetPosition().y - target->GetPosition().y };
+	 return distance;
 }
 
 void Bot::SetState(BotState newstate)

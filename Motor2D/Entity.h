@@ -15,7 +15,7 @@ public:
 
 	virtual bool Start();
 	virtual bool Update(float dt);
-	virtual void Destroy();
+	virtual  void Destroy();
 
 	//Set methods
 	void SetPosition(float, float);

@@ -30,6 +30,9 @@ public:
 	fPoint GetPos();
 	bool CheckForEnemies(float range);
 	bool TargetOnRange(float range);
+	bool KiteFromEnemy(int attackrange);
+	bool FleeFromEnemies();
+	C_Vec2<float> DistanceWithTarget();
 	void FollowTarget();
 	bool EnemyOnUnitRange(Unit* unit1, Unit* unit2, float range);
 	void SetState(BotState newstate);
@@ -43,6 +46,7 @@ public:
 	Unit* target;
 	fPoint targetLastPos;
 
+	fPoint initialPos;
 	j1Timer updateTimer;
 	j1Timer attackTimer;
 
