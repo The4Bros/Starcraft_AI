@@ -3,6 +3,7 @@
 #include "M_EntityManager.h"
 #include "M_AI.h"
 #include "Unit.h"
+#include "M_PathFinding.h"
 
 Bot::Bot()
 {
@@ -37,6 +38,14 @@ Bot::~Bot()
 	}
 	
  
+	
+
+	return ret;
+}
+
+bool Bot::FixedUpdate()
+{
+	bool ret = true;
 	switch (state)
 	{
 	case BotState::idle:
@@ -50,7 +59,7 @@ Bot::~Bot()
 		break;
 
 	case BotState::kite:
-		KiteFromEnemy(30);
+		KiteFromEnemy(40);
 		LOG("KITE STATE");
 		break;
 
@@ -59,14 +68,6 @@ Bot::~Bot()
 		LOG("FLEE STATE");
 		break;
 	}
-
-	return ret;
-}
-
-bool Bot::FixedUpdate()
-{
-	bool ret = true;
-
 	return ret;
 }
 
@@ -119,7 +120,7 @@ bool Bot::CheckForEnemies(float range){
 	C_List_item<Unit*>* item = NULL;
 	item = App->entityManager->unitList.start;
 	C_List<Unit*> OtherTeamList;
-
+	float closestdistance = 300.0f;
 	while (item)
 	{
 		if (item->data->team != unit->team)
@@ -135,13 +136,22 @@ bool Bot::CheckForEnemies(float range){
 	{
 		if (EnemyOnUnitRange(item2->data, unit,range))
 		{
-			target = item2->data;
-			SetState(attack);
-			return true;
+			if (DistanceBetweenUnits(item2->data, unit) < closestdistance)
+			{
+				closestdistance = DistanceBetweenUnits(item2->data, unit);
+				target = item2->data;
+			}
 		}
 
 		item2 = item2->next;
 	}
+
+	if (target != NULL)
+	{
+		SetState(attack);
+		return true;
+	}
+
 	return false;
 }
 
@@ -162,18 +172,20 @@ bool Bot::TargetOnRange(float range)
 
 	if (EnemyOnUnitRange(target, unit, range))
 	{
-		if (EnemyOnUnitRange(target, unit, 30)){
+		if (EnemyOnUnitRange(target, unit, 40)){
 
-			if (EnemyOnUnitRange(target, unit, 10))
+			/*if (EnemyOnUnitRange(target, unit, 20))
 			{
 				SetState(kite);
 				return true;
-			}
-			unit->SetDirection(target->GetPosition());
-			target->Hit(1, normal);
+			}*/
+			unit->Stop();
+			C_Vec2<float> dir = { target->GetPosition().x, target->GetPosition().y};
+			unit->SetDirection(dir);
+			target->Hit(3, normal);
 			return true;
 		}
-		else if (target->GetHP() > 0 && target != NULL)
+		else if (target->GetHP() > 0  && target != NULL)
 		{
 			FollowTarget();
 			return true;
@@ -196,24 +208,7 @@ bool Bot::TargetOnRange(float range)
 
 void Bot::FollowTarget()
 {
-	C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
-	if (distance.x > 0 &&  distance.y > 0)
-	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
-	}
-	else if (distance.x > 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + 20), target->GetPosition().y + (target->colRadius + 20));
-	}
-	else if (distance.x < 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y + (target->colRadius + 20));
-	}
-	else
-	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + 20), target->GetPosition().y - (target->colRadius + 20));
-	}
-	
+	unit->SetTarget(target->GetPosition().x - (target->colRadius + unit->colRadius), target->GetPosition().y - (target->colRadius + unit->colRadius));
 }
 
 bool Bot::KiteFromEnemy(int attackrange)
@@ -221,19 +216,20 @@ bool Bot::KiteFromEnemy(int attackrange)
 	C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
 	if (distance.x > 0 && distance.y > 0)
 	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
 	}
 	else if (distance.x > 0 && distance.y < 0)
 	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
 	}
 	else if (distance.x < 0 && distance.y < 0)
 	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+		
 	}
 	else
 	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
 	}
 	SetState(attack);
 	return true;
@@ -241,12 +237,27 @@ bool Bot::KiteFromEnemy(int attackrange)
 
 bool Bot::FleeFromEnemies()
 {
-	unit->SetTarget(initialPos.x , initialPos.y);
+	srand(NULL);
+	int r = rand() % 600;
+	int n = rand() % 600;
+		unit->SetTarget(r + unit->GetPosition().y, n + unit->GetPosition().x);
 	flees = true;
-	SetState(idle);
+	if (CheckForEnemies(301) == false)
+	{
+		SetState(idle);
+	}
+	
 	return true;
 }
 
+void Bot::FindPlaceToFight(){
+
+	C_Vec2<float> distance = { (target->GetPosition().x + unit->GetPosition().x)/2, (target->GetPosition().y + unit->GetPosition().y)/2};
+	
+	if (App->pathFinding->IsWalkable(distance.x , distance.y))
+		unit->SetTarget(distance.x - (target->colRadius + 20), distance.y - (target->colRadius + 20));
+	
+}
 
 
 
@@ -254,6 +265,12 @@ bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2,float range)
 {
 	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
 	return (distance.GetModule() < range + unit1->colRadius + unit2->colRadius);
+}
+
+float Bot::DistanceBetweenUnits(Unit* unit1, Unit* unit2)
+{
+	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
+	return distance.GetModule();
 }
 
 C_Vec2<float> Bot::DistanceWithTarget()

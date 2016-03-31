@@ -142,7 +142,6 @@ bool Unit::Move(float dt)
 			position.x += rest.x;
 			position.y += rest.y;
 			
-				
 		}
 		
 	}
@@ -428,11 +427,33 @@ void Unit::SetPosToTarget()
 	currentVelocity.position = desiredVelocity.position = position;
 }
 
-void Unit::SetDirection(fPoint dir)
+bool Unit::SetDirection(C_Vec2<float> dir)
 {
-	C_Vec2<float> dir_tmp;
-	dir_tmp.x = dir.x;
-	dir_tmp.y = dir.y;
+	bool ret = true;
+	int positive = 1;
+
+	float currentAngle = currentVelocity.GetAngle();
+	float desiredAngle = dir.GetAngle();
+
+	//Getting the direction of the rotation
+	float diffAngle = abs(currentAngle - desiredAngle);
+	bool currBigger = (currentAngle > desiredAngle);
+	bool difBigger = (diffAngle > 180);
+	if (currBigger == difBigger)
+		positive = 1;
+	else
+		positive = -1;
 	
+	float stepAngle = 4.5;
+	float angle = rotationSpeed;
+	int steps = (int)(angle / stepAngle);
+	float rest = angle - stepAngle * steps;
+
+	
+		currentVelocity.SetAngle(currentVelocity.GetAngle() + diffAngle * positive);
+		
+	
+
+	return ret;
 }
 

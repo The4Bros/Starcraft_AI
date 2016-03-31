@@ -31,7 +31,9 @@ public:
 	bool CheckForEnemies(float range);
 	bool TargetOnRange(float range);
 	bool KiteFromEnemy(int attackrange);
+	void FindPlaceToFight();
 	bool FleeFromEnemies();
+	float DistanceBetweenUnits(Unit* unit1, Unit* unit2);
 	C_Vec2<float> DistanceWithTarget();
 	void FollowTarget();
 	bool EnemyOnUnitRange(Unit* unit1, Unit* unit2, float range);

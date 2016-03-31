@@ -118,7 +118,7 @@ void S_SceneAI::ManageInput(float dt)
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			App->entityManager->CreateUnit(p.x + 4, p.y + 4, unit_1, team);
+			App->AI->CreateBot(p.x + 4, p.y + 4, unit_1, team);
 		}
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
