@@ -81,7 +81,7 @@ bool Bot::FixedUpdate()
 				if (unit->GetHP() < unit->GetMaxHP() / 10) //flee when less than 10% health
 					SetState(flee);
 			}
-			if (kites)
+			if (kites && unit->isTargetReached())
 			{
 				float distance = DistanceBetweenUnits(target->unit, unit);
 
