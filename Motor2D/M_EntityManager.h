@@ -32,6 +32,7 @@ public:
 	bool IsUnitSelected(C_List_item<Unit*>*);
 	void SendNewPath(int x, int y);
 	void SendNewPath(int x, int y, C_List<Unit*> units);
+	void SendNewPath(int x, int y, Unit* unit);
 
 	SDL_Texture* GetTexture(Unit_Type type);
 

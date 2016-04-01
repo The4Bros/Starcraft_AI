@@ -8,9 +8,6 @@
 #include "Bot.h"
 #include "StarcraftBot.h"
 
-class Bot;
-class StarcraftBot;
-
 class M_AI : public j1Module
 {
 public:
@@ -27,17 +24,23 @@ public:
 	//void ManageInput();
 
 	Bot* CreateBot(int x, int y, Unit_Type type, float team);
-	StarcraftBot* CreateStarcraftBot(int x, int y);
+	StarcraftBot* CreateStarcraftBot(int x, int y, float team);
 
 	bool GetEntityData(Unit_Type type, std::pair<const char*, std::map < const char*, SimpleCVar >>* stats);
+
+	void OnUnitKill(StarcraftBot* father, Bot* unit);
+	void OnUnitDanger(StarcraftBot* father, Bot* unit);
+	void OnUnitIdle(StarcraftBot* father, Bot* unit);
+
+	C_List<Bot*> GetEnemies(float team);
 
 public:
 
 	C_List<Bot*> botList;
 	C_List<StarcraftBot*> starcraftBotList;
 
-	C_List<StarcraftBot*> deadStarcraftBotList;
 	C_List<Bot*> deadBotList;
+	C_List<StarcraftBot*> deadStarcraftBotList;
 
 private:
 

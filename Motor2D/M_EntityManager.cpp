@@ -441,6 +441,29 @@ void M_EntityManager::SendNewPath(int x, int y, C_List<Unit*> units)
 	}
 }
 
+void M_EntityManager::SendNewPath(int x, int y, Unit* unit)
+{
+	if (App->pathFinding->allowPath)
+	{
+		if (App->pathFinding->IsWalkable(x, y))
+		{
+			C_DynArray<iPoint> newPath;
+
+			//---------------------------------------------------------
+			fPoint unitPos = unit->GetPosition();
+			iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+			iPoint dstTile = { x, y };
+			App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
+			unit->SetNewPath(newPath);
+		}
+	}
+	else
+	{
+		iPoint dst = App->map->MapToWorld(x, y);
+		unit->SetTarget(dst.x, dst.y);
+	}
+}
+
 SDL_Texture* M_EntityManager::GetTexture(Unit_Type type)
 {
 	SDL_Texture* ret = NULL;

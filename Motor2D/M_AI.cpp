@@ -84,7 +84,7 @@ bool M_AI::Update(float dt)
 		while (bot)
 		{
 			if (!bot->data->Update(dt))
-				deadBotList.add(bot->data);
+				OnUnitKill(bot->data->father, bot->data);
 			bot = bot->next;
 		}
 	}
@@ -133,19 +133,29 @@ bool M_AI::CleanUp()
 
 Bot* M_AI::CreateBot(int x, int y, Unit_Type type, float team)
 {
-	Bot* ret = new Bot(x, y, type, team);
+	Bot* ret = NULL;
+	iPoint tile = App->map->WorldToMap(x, y);
 
-	std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
-	App->AI->GetEntityData(type, &entity_stats);
-	AddBot(ret);
-	ret->SetStats(entity_stats, 4);
+	if (App->pathFinding->IsWalkable(tile.x, tile.y))
+	{
+		ret = new Bot(x, y, type, team, NULL);
+
+		std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
+		App->AI->GetEntityData(type, &entity_stats);
+		ret->SetStats(entity_stats, 4);
+		AddBot(ret);
+	}
 
 	return ret;
 }
 
-StarcraftBot* M_AI::CreateStarcraftBot(int x, int y)
+StarcraftBot* M_AI::CreateStarcraftBot(int x, int y, float team)
 {
 	StarcraftBot* ret = NULL;
+
+	ret = new StarcraftBot(x, y, team);
+	
+	AddStarcraftBot(ret);
 
 	return ret;
 }
@@ -162,6 +172,48 @@ bool M_AI::GetEntityData(Unit_Type type, std::pair<const char*, std::map < const
 	stats->first = it->first;
 	stats->second = it->second;
 
+	return ret;
+}
+
+void M_AI::OnUnitKill(StarcraftBot* father, Bot* unit)
+{
+	if (!father)
+	{
+		deadBotList.add(unit);
+	}
+	else
+	{
+		father->OnUnitKill(unit);
+	}
+}
+
+void M_AI::OnUnitDanger(StarcraftBot* father, Bot* unit)
+{
+	if (father && unit)
+	{
+		father->endangeredUnits.add(unit);
+	}
+}
+
+void M_AI::OnUnitIdle(StarcraftBot* father, Bot* unit)
+{
+	if (father && unit)
+	{
+		father->idleUnits.add(unit);
+	}
+}
+
+C_List<Bot*> M_AI::GetEnemies(float team)
+{
+	C_List<Bot*> ret;
+	C_List_item<Bot*>* item = NULL;
+	item = botList.start;
+	while (item)
+	{
+		if (item->data->unit->team != team)
+			ret.add(item->data);
+		item = item->next;
+	}
 	return ret;
 }
 
@@ -184,5 +236,3 @@ bool M_AI::AddStarcraftBot(StarcraftBot* starcraftBot)
 
 	return ret;
 }
-
-

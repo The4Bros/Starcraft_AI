@@ -27,6 +27,7 @@ public:
 	void SetFlying(bool fly);
 
 	int GetHP() const;
+	int GetMaxHP() const;
 	void Hit(int damage);
 
 	//HP controllers

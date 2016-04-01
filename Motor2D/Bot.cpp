@@ -4,19 +4,21 @@
 #include "M_AI.h"
 #include "Unit.h"
 #include "M_PathFinding.h"
+#include "M_Map.h"
 
 Bot::Bot()
 {
 
 }
-Bot::Bot(int x, int y, Unit_Type type, float team)
+Bot::Bot(int x, int y, Unit_Type type, float team, StarcraftBot* father)
 {
 	unit = App->entityManager->CreateUnit(x, y, type, team);
 	initialPos.x = x;
 	initialPos.y = y;
 	target = NULL;
-	targetLastPos.SetToZero();
+	this->father = father;
 	updateTimer.Start();
+	attackTimer.Start();
 }
 
 Bot::~Bot()
@@ -26,19 +28,33 @@ Bot::~Bot()
 
  bool Bot::Update(float dt)
 {
-	bool ret = true;
-
 	if (unit->GetHP() <= 0)
 		return false;
+
+	bool ret = true;
 
 	if (fixedUpdateSeconds <= updateTimer.ReadSec())
 	{
 		FixedUpdate();
 		updateTimer.Start();
 	}
-	
- 
-	
+
+	if (!father)
+	{
+		//has to handle own behaviour
+
+		if (state == attack)
+		{
+			if (unit->isTargetReached())
+			{
+				if (attackSpeed <= attackTimer.ReadSec())
+				{
+					target->OnAttack(damage, this);
+					attackTimer.Start();
+				}
+			}
+		}
+	}
 
 	return ret;
 }
@@ -48,30 +64,236 @@ bool Bot::FixedUpdate()
 	bool ret = true;
 	switch (state)
 	{
-	case BotState::idle:
+ 	case BotState::idle:
 		LOG("IDLE STATE");
-		CheckForEnemies(200);
+		if (CheckForEnemies())
+		{
+			SetState(attack);
+		}
 		break;
 
 	case BotState::attack:
-		TargetOnRange(300);
 		LOG("ATTACK STATE");
-		break;
+		if (target)
+		{
+			if (flees)
+			{
+				if (unit->GetHP() < unit->GetMaxHP() / 10) //flee when less than 10% health
+					SetState(flee);
+			}
+			if (kites)
+			{
+				float distance = DistanceBetweenUnits(target->unit, unit);
 
-	case BotState::kite:
-		KiteFromEnemy(40);
-		LOG("KITE STATE");
+				if (distance < attackRange * 0.3f)
+				{
+					int x, y;
+
+					x = 0;
+					y = 0;
+
+					/*
+					******************************
+					SET X & Y FOR KITING POSITION
+					******************************
+					
+
+					C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
+					if (distance.x > 0 && distance.y > 0)
+					{
+						unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+					}
+					else if (distance.x > 0 && distance.y < 0)
+					{
+						unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+					}
+					else if (distance.x < 0 && distance.y < 0)
+					{
+						unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
+
+					}
+					else
+					{
+						unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
+					}
+					SetState(attack);
+					return true;
+					*/
+
+					C_DynArray<iPoint> newPath;
+					fPoint unitPos = unit->GetPosition();
+					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+					App->pathFinding->GetNewPath(unitTile, { x, y }, newPath);
+					unit->SetNewPath(newPath);
+				}
+
+			}
+			else if (!EnemyOnRange(target->unit, unit, attackRange))
+			{
+				C_DynArray<iPoint> newPath;
+				fPoint unitPos = unit->GetPosition();
+				fPoint targetPos = target->unit->GetPosition();
+				iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+				iPoint enemyTile = App->map->WorldToMap(round(targetPos.x), round(targetPos.y));
+				App->pathFinding->GetNewPath(unitTile, enemyTile, newPath);
+				unit->SetNewPath(newPath);
+			}
+		}
+		else
+		{
+			SetState(idle);
+		}
+
 		break;
 
 	case BotState::flee:
-		FleeFromEnemies();
 		LOG("FLEE STATE");
+		if (unit->isTargetReached())
+		{
+			if (DistanceBetweenUnits(target->unit, unit) < sightRange * 4.0f)
+			{ 
+				// flees in random position
+				int x = (rand() % 600) + unit->GetPosition().x;
+				int y = (rand() % 600) + unit->GetPosition().y;
+
+				C_DynArray<iPoint> newPath;
+				fPoint unitPos = unit->GetPosition();
+				iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+				App->pathFinding->GetNewPath(unitTile, { x, y }, newPath);
+				unit->SetNewPath(newPath);
+			}
+			else
+			{
+				SetState(idle);
+			}
+		}
+		
 		break;
 	}
 	return ret;
 }
 
-bool PostUpdate(float dt);
+
+
+
+
+bool Bot::CheckForEnemies()
+{
+	bool ret = false;
+	C_List<Bot*> potentialTargets;
+	C_List_item<Bot*>* item = App->AI->botList.start;
+
+	// check for potential enemy bots
+	while (item)
+	{
+		if (item->data->GetTeam() != unit->team)
+		{
+			if (DistanceBetweenUnits(item->data->unit, unit) <= sightRange)
+				potentialTargets.add(item->data);
+		}
+
+		item = item->next;
+	}
+
+	if (potentialTargets.count() > 0)
+	{
+		item = App->AI->botList.start;
+		
+		float closestdistance = DistanceBetweenUnits(item->data->unit, unit);
+		float distance = 0.0f;
+
+		//filter the list
+		while (item)
+		{
+			distance = DistanceBetweenUnits(item->data->unit, unit);
+
+			if (distance <= closestdistance)
+			{
+				closestdistance = distance;
+				target = item->data;
+			}
+
+			item = item->next;
+		}
+
+		SetState(attack);
+		ret = true;
+	}
+
+	return ret;
+}
+
+void Bot::FollowTarget()
+{
+	unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + unit->colRadius), target->unit->GetPosition().y - (target->unit->colRadius + unit->colRadius));
+}
+
+bool Bot::KiteFromEnemy(int attackrange)
+{
+	C_Vec2<float> distance = { target->unit->GetPosition().x - unit->GetPosition().x, target->unit->GetPosition().y - unit->GetPosition().y };
+	if (distance.x > 0 && distance.y > 0)
+	{
+		unit->SetTarget(target->unit->GetPosition().x + (target->unit->colRadius + attackrange), target->unit->GetPosition().y - (target->unit->colRadius + attackrange));
+	}
+	else if (distance.x > 0 && distance.y < 0)
+	{
+		unit->SetTarget(target->unit->GetPosition().x + (target->unit->colRadius + attackrange), target->unit->GetPosition().y + (target->unit->colRadius + attackrange));
+	}
+	else if (distance.x < 0 && distance.y < 0)
+	{
+		unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + attackrange), target->unit->GetPosition().y + (target->unit->colRadius + attackrange));
+		
+	}
+	else
+	{
+		unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + attackrange), target->unit->GetPosition().y - (target->unit->colRadius + attackrange));
+	}
+
+	return true;
+}
+
+
+void Bot::FindPlaceToFight(){
+
+	C_Vec2<float> distance = { (target->unit->GetPosition().x + unit->GetPosition().x) / 2, (target->unit->GetPosition().y + unit->GetPosition().y) / 2 };
+	
+	if (App->pathFinding->IsWalkable(distance.x , distance.y))
+		unit->SetTarget(distance.x - (target->unit->colRadius + 20), distance.y - (target->unit->colRadius + 20));
+	
+}
+
+bool Bot::EnemyOnRange(Unit* unit1, Unit* unit2, float range)
+{
+	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
+	return (distance.GetModule() < range + unit1->colRadius + unit2->colRadius);
+}
+
+float Bot::DistanceBetweenUnits(Unit* unit1, Unit* unit2)
+{
+	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
+	return distance.GetModule();
+}
+
+C_Vec2<float> Bot::DistanceWithTarget()
+{
+	C_Vec2<float> distance = { unit->GetPosition().x - target->unit->GetPosition().x, unit->GetPosition().y - target->unit->GetPosition().y };
+	 return distance;
+}
+
+fPoint Bot::GetPos()
+{
+	return unit->GetPosition();
+}
+
+float Bot::GetTeam()
+{
+	float ret = 0.0f;
+
+	if (unit)
+		ret = unit->team;
+
+	return ret;
+}
 
 bool Bot::SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats, int index)
 {
@@ -90,6 +312,9 @@ bool Bot::SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> en
 	if (!(ret = it->second.Read(&attackRange))) return ret;
 
 	it++;
+	if (!(ret = it->second.Read(&attackSpeed))) return ret;
+
+	it++;
 	if (!(ret = it->second.Read(&kites))) return ret;
 
 	it++;
@@ -98,10 +323,17 @@ bool Bot::SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> en
 	return ret;
 }
 
-fPoint Bot::GetPos()
+void Bot::SetState(BotState bState)
 {
-	return unit->GetPosition();
+	state = bState;
+	switch (state)
+	{
+	case idle:
+		App->AI->OnUnitIdle(father, this);
+		break;
+	}
 }
+
 
 
 void Bot::OnAttack(int damage, Bot* attacker)
@@ -112,174 +344,38 @@ void Bot::OnAttack(int damage, Bot* attacker)
 	{
 		App->entityManager->deleteUnit(unit);
 		App->AI->deadBotList.add(this);
+
+		if (father)
+			App->AI->OnUnitKill(father, this);
+	}
+	else if (father)
+	{
+		App->AI->OnUnitDanger(father, this);
+	}
+	else if (flees)
+	{
+		if (unit->GetHP() < unit->GetMaxHP() / 10)
+			SetState(flee);
+		else
+			SetState(attack);
+	}
+	else
+	{
+		SetState(attack);
 	}
 }
 
-bool Bot::CheckForEnemies(float range){
-	
-	C_List_item<Unit*>* item = NULL;
-	item = App->entityManager->unitList.start;
-	C_List<Unit*> OtherTeamList;
-	float closestdistance = 300.0f;
-	while (item)
-	{
-		if (item->data->team != unit->team)
-			OtherTeamList.add(item->data);
-
-		item = item->next;
-	}
-
-	C_List_item<Unit*>* item2 = NULL;
-	item2 = OtherTeamList.start;
-
-	while (item2)
-	{
-		if (EnemyOnUnitRange(item2->data, unit,range))
-		{
-			if (DistanceBetweenUnits(item2->data, unit) < closestdistance)
-			{
-				closestdistance = DistanceBetweenUnits(item2->data, unit);
-				target = item2->data;
-			}
-		}
-
-		item2 = item2->next;
-	}
-
+void Bot::Attack(Bot* target)
+{
 	if (target != NULL)
 	{
 		SetState(attack);
-		return true;
+		this->target = target;
 	}
-
-	return false;
 }
 
-bool Bot::TargetOnRange(float range)
+
+void Bot::GoTo(fPoint pos)
 {
-	
-	if (App->entityManager->unitList.find(target) == -1)
-	{
-		target = NULL;
-		SetState(idle);
-		return false;
-	}
-	if (unit->GetHP() < 20)
-	{
-		SetState(flee);
-		return false;
-	}
-
-	if (EnemyOnUnitRange(target, unit, range))
-	{
-		if (EnemyOnUnitRange(target, unit, 40)){
-
-			/*if (EnemyOnUnitRange(target, unit, 20))
-			{
-				SetState(kite);
-				return true;
-			}*/
-			unit->Stop();
-			C_Vec2<float> dir = { target->GetPosition().x, target->GetPosition().y};
-			unit->SetDirection(dir);
-			target->Hit(3, normal);
-			return true;
-		}
-		else if (target->GetHP() > 0  && target != NULL)
-		{
-			FollowTarget();
-			return true;
-		}
-		else
-		{
-			target = NULL;
-			SetState(idle);
-			return false;
-		}
-	}
-	else
-	{
-		target = NULL;
-		SetState(idle);
-		return false;
-	}
-
-}
-
-void Bot::FollowTarget()
-{
-	unit->SetTarget(target->GetPosition().x - (target->colRadius + unit->colRadius), target->GetPosition().y - (target->colRadius + unit->colRadius));
-}
-
-bool Bot::KiteFromEnemy(int attackrange)
-{
-	C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
-	if (distance.x > 0 && distance.y > 0)
-	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
-	}
-	else if (distance.x > 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
-	}
-	else if (distance.x < 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
-		
-	}
-	else
-	{
-		unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
-	}
-	SetState(attack);
-	return true;
-}
-
-bool Bot::FleeFromEnemies()
-{
-	srand(NULL);
-	int r = rand() % 600;
-	int n = rand() % 600;
-		unit->SetTarget(r + unit->GetPosition().y, n + unit->GetPosition().x);
-	flees = true;
-	if (CheckForEnemies(301) == false)
-	{
-		SetState(idle);
-	}
-	
-	return true;
-}
-
-void Bot::FindPlaceToFight(){
-
-	C_Vec2<float> distance = { (target->GetPosition().x + unit->GetPosition().x)/2, (target->GetPosition().y + unit->GetPosition().y)/2};
-	
-	if (App->pathFinding->IsWalkable(distance.x , distance.y))
-		unit->SetTarget(distance.x - (target->colRadius + 20), distance.y - (target->colRadius + 20));
-	
-}
-
-
-
-bool Bot::EnemyOnUnitRange(Unit* unit1, Unit* unit2,float range)
-{
-	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
-	return (distance.GetModule() < range + unit1->colRadius + unit2->colRadius);
-}
-
-float Bot::DistanceBetweenUnits(Unit* unit1, Unit* unit2)
-{
-	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
-	return distance.GetModule();
-}
-
-C_Vec2<float> Bot::DistanceWithTarget()
-{
-	 C_Vec2<float> distance = { unit->GetPosition().x - target->GetPosition().x, unit->GetPosition().y - target->GetPosition().y };
-	 return distance;
-}
-
-void Bot::SetState(BotState newstate)
-{
-	state = newstate;
+	App->entityManager->SendNewPath(pos.x, pos.y, unit);
 }

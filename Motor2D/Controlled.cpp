@@ -54,6 +54,11 @@ int Controlled::GetHP() const
 	return currHP;
 }
 
+int Controlled::GetMaxHP() const
+{
+	return maxHP;
+}
+
 void Controlled::CreateBar()
 {
 	HPBar_Empty = App->gui->CreateUI_Image({ 150, 150, 0, 0 }, App->entityManager->hpBar_empty, { 0, 0, 107, 9 });
