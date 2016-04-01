@@ -15,6 +15,7 @@ StarcraftBot::StarcraftBot(int x, int y, float team)
 	base.x = x;
 	base.y = y;
 	this->team = team;
+	units.add(App->AI->CreateBot(x, y, unit_2, team));
 }
 
 StarcraftBot::~StarcraftBot()
@@ -35,19 +36,18 @@ bool StarcraftBot::Update(float dt)
 		{
 			int x = base.x;
 			int y = base.y;
-			units.add(new Bot(x, y, unit_3, team, this));
+			units.add(App->AI->CreateBot(x, y, unit_2, team));
 			spawnTimer.Start();
 		}
 	}
-	else
+	else // max population: lauch attack
 	{
-		
 		C_List_item<Bot*>* bot = units.start;
 
 		while (bot)
 		{
 			if (bot->data->target != NULL)
-
+				bot->data->Attack(enemies.start->data);
 
 			bot = bot->next;
 		}
@@ -60,20 +60,6 @@ bool StarcraftBot::Update(float dt)
 		updateTimer.Start();
 	}
 
-	if (units.count() > 0)
-	{
-		C_List_item<Bot*>* bot = NULL;
-		bot = units.start;
-
-		while (bot)
-		{
-
-
-
-			bot = bot->next;
-		}
-	}
-
 	return ret;
 }
 
@@ -81,30 +67,27 @@ bool StarcraftBot::FixedUpdate()
 {
 	bool ret = true;
 
-	if (endangeredUnits.count() > 0)
+	C_List_item<Bot*>* bot = NULL;
+	Bot* ally = NULL;
+
+	for (C_List_item<Bot*>* unit = endangeredUnits.start; unit; unit = unit->next)
 	{
-		C_List<Bot*> availableUnits;
-
-		for (C_List_item<Bot*>* bot = units.start; bot; bot = bot->next)
+		if (idleUnits.count() > 0)
 		{
-			if (bot->data->state == idle)
-				availableUnits.add(bot->data);
+			bot = idleUnits.start;
+			ally = bot->data;
+
+			int distance = bot->data->DistanceBetweenUnits(bot->data->unit, unit->data->unit);
+
+			for (; bot; bot = bot->next)
+			{
+				if (bot->data->DistanceBetweenUnits(bot->data->unit, unit->data->unit) < distance)
+					ally = bot->data;
+			}
+
+			ally->Attack(unit->data->target);
 		}
-
-		if (availableUnits.count() > 0)
-		{
-			C_List_item<Bot*>* endangered = endangeredUnits.start;
-
-			// repartir ataque
-
-
-
-		}
-		
-		int unitRatio =  endangeredUnits.count();
 	}
-
-	enemies = App->AI->GetEnemies(team);
 
 	return ret;
 }

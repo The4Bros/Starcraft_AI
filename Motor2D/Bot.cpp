@@ -89,36 +89,12 @@ bool Bot::FixedUpdate()
 				{
 					int x, y;
 
-					x = 0;
-					y = 0;
+					x = unit->GetPosition().x;
+					y = unit->GetPosition().y;
 
-					/*
-					******************************
+					/******************************
 					SET X & Y FOR KITING POSITION
-					******************************
-					
-
-					C_Vec2<float> distance = { target->GetPosition().x - unit->GetPosition().x, target->GetPosition().y - unit->GetPosition().y };
-					if (distance.x > 0 && distance.y > 0)
-					{
-						unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
-					}
-					else if (distance.x > 0 && distance.y < 0)
-					{
-						unit->SetTarget(target->GetPosition().x + (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
-					}
-					else if (distance.x < 0 && distance.y < 0)
-					{
-						unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y + (target->colRadius + attackrange));
-
-					}
-					else
-					{
-						unit->SetTarget(target->GetPosition().x - (target->colRadius + attackrange), target->GetPosition().y - (target->colRadius + attackrange));
-					}
-					SetState(attack);
-					return true;
-					*/
+					*******************************/
 
 					C_DynArray<iPoint> newPath;
 					fPoint unitPos = unit->GetPosition();

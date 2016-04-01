@@ -117,6 +117,7 @@ void S_SceneAI::ManageInput(float dt)
 			App->input->GetMousePosition(x, y);
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
+			p = App->map->MapToWorld(p.x, p.y);
 			App->AI->CreateBot(p.x + 4, p.y + 4, unit_1, team);
 		}
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -125,7 +126,8 @@ void S_SceneAI::ManageInput(float dt)
 			App->input->GetMousePosition(x, y);
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
-			App->AI->CreateBot(p.x + 4, p.y + 4, unit_2, team + 1);
+			p = App->map->MapToWorld(p.x, p.y);
+			App->AI->CreateStarcraftBot(p.x + 4, p.y + 4, team + 1);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{
