@@ -28,14 +28,14 @@ public:
 
 	float team;
 	fPoint base;
-	int maxPopulation = 10;
+	int maxPopulation = 4;
 
 
 	j1Timer updateTimer;
-	float fixedUpdateSeconds = 0.25f;
+	float fixedUpdateSeconds = 0.05f;
 
 	j1Timer spawnTimer;
-	float SpawnTime = 4.0f;
+	float SpawnTime = 0.5f;
 
 	bool attacking = false;
 
@@ -43,7 +43,6 @@ public:
 	C_List<Bot*> units;
 	C_List<Bot*> endangeredUnits;
 	C_List<Bot*> idleUnits;
-	C_List<Bot*> enemies;
 };
 
 #endif //__STARCRAFTBOT_H__
