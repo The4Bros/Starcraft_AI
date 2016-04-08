@@ -26,6 +26,7 @@ bool M_EntityManager::PreStart(pugi::xml_node& node)
 	entity_tex = App->tex->Load("graphics/protoss/units/plane.png");
 	bot_tex = App->tex->Load("graphics/protoss/units/plane_BOT.png");
 	unit_base = App->tex->Load("graphics/ui/o062.png");
+	unit_red_base = App->tex->Load("graphics/ui/o062red.png");
 	path_tex = App->tex->Load("textures/path.png");
 	hpBar_empty = App->tex->Load("graphics/ui/hpbarempt.png");
 	hpBar_filled = App->tex->Load("graphics/ui/hpbarfull.png");
@@ -340,6 +341,8 @@ bool M_EntityManager::Order(int x, int y)
 
 				if (SDL_HasIntersection(&rect, &itemRect) && item->data->team != App->AI->playerTeam)
 				{
+					item->data->Target();
+
 					C_List_item<Unit*>* selected = selectedUnits.start;
 
 					while (selected)
@@ -353,10 +356,10 @@ bool M_EntityManager::Order(int x, int y)
 
 				item = item->next;
 			}
-
-			return false;
 		}
 	}
+
+	return false;
 }
 
 void M_EntityManager::SendNewPath(int x, int y)
@@ -364,7 +367,7 @@ void M_EntityManager::SendNewPath(int x, int y)
 	if (App->pathFinding->allowPath)
 	{
 		//---------------------------------------------------------------------
-		if (App->pathFinding->IsWalkable(x, y))
+		if (App->pathFinding->IsWalkable(x, y) && selectedUnits.start->data->team == App->AI->playerTeam)
 		{
 			for (uint i = 0; i < selectedUnits.count(); i++)
 			{

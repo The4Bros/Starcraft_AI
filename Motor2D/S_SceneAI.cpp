@@ -3,7 +3,6 @@
 #include "j1App.h"
 #include "M_Input.h"
 #include "M_Textures.h"
-//#include "M_Audio.h"
 #include "M_Render.h"
 #include "M_Window.h"
 #include "M_Map.h"
@@ -12,9 +11,6 @@
 #include "M_EntityManager.h"
 #include "Entity.h"
 #include "Unit.h"
-//#include "j1Gui.h"
-//#include "UIElements.h"
-//#include "M_Fonts.h"
 #include "M_Console.h"
 #include "M_AI.h"
 

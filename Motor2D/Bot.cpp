@@ -50,9 +50,14 @@ bool Bot::FixedUpdate()
 	{
  	case BotState::idle:
 		LOG("IDLE STATE");
-		if (unit->team != App->AI->playerTeam && CheckForEnemies())
+		if (unit->team == App->AI->playerTeam)
 		{
-			SetState(attack);
+			if (unit->ArrivedToDestination())
+				CheckForEnemies();
+		}
+		else
+		{
+			CheckForEnemies();
 		}
 		break;
 
@@ -62,7 +67,7 @@ bool Bot::FixedUpdate()
 		{
 			if (flees)
 			{
-				if (unit->GetHP() < unit->GetMaxHP() )/// 10) //flee when less than 10% health
+				if (unit->GetHP() < unit->GetMaxHP() / 4) //flee when less than 10% health
 				{
 					SetState(flee);
 					break;
@@ -72,7 +77,7 @@ bool Bot::FixedUpdate()
 			if (EnemyOnRange(target->unit, unit, attackRange))
 			{
 				//TODO: 3 - Attack target
-				if (!unit->targetReached)
+				if (!unit->ArrivedToDestination())
 					unit->Stop();
 
 				if (attackTimer.ReadSec() >= attackSpeed)
@@ -81,12 +86,12 @@ bool Bot::FixedUpdate()
 					target->OnAttack(damage, this);
 				}
 			}
-			else if (EnemyOnRange(target->unit, unit, sightRange) || unit->team == App->AI->playerTeam)
+			else if (unit->team == App->AI->playerTeam || father != NULL || EnemyOnRange(target->unit, unit, sightRange))
 			{
 				//TODO: 2 - Chase target
-				iPoint iTargetPos = { int(target->GetPos().x), int(target->GetPos().y) };
 
-				if (iTargetPos != unit->target)
+				// Compare target position with unit position 
+				if (targetPos != target->GetPos() || unit->isTargetReached())
 				{
 					C_DynArray<iPoint> newPath;
 					fPoint unitPos = unit->GetPosition();
@@ -111,13 +116,13 @@ bool Bot::FixedUpdate()
 
 	case BotState::flee:
 		LOG("FLEE STATE");
-		if (unit->isTargetReached())
+		if (unit->ArrivedToDestination())
 		{
 			if (DistanceBetweenUnits(target->unit, unit) < sightRange * 1.5f)
 			{ 
 				// flees in random direction
-				int x = (rand() % 600) + unit->GetPosition().x;
-				int y = (rand() % 600) + unit->GetPosition().y;
+				int x = (rand() % 60) + unit->GetPosition().x;
+				int y = (rand() % 60) + unit->GetPosition().y;
 
 				C_DynArray<iPoint> newPath;
 				fPoint unitPos = unit->GetPosition();
@@ -287,9 +292,9 @@ bool Bot::SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> en
 	return ret;
 }
 
-void Bot::SetState(BotState bState)
+void Bot::SetState(BotState _state)
 {
-	state = bState;
+	state = _state;
 	switch (state)
 	{
 	case idle:
@@ -308,6 +313,13 @@ void Bot::OnAttack(int damage, Bot* attacker)
 	if (unit->GetHP() <= 0)
 	{
 		OnKill();
+	}
+	else if (unit->team == App->AI->playerTeam)
+	{
+		if (unit->ArrivedToDestination())
+		{
+			Attack(attacker);
+		}
 	}
 	else if (father)
 	{
@@ -336,6 +348,7 @@ void Bot::Attack(Bot* target)
 	{
 		SetState(attack);
 		this->target = target;
+		targetPos = target->GetPos();
 	}
 }
 

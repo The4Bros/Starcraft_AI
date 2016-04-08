@@ -40,7 +40,7 @@ public:
 	fPoint	GetPos();
 	float	GetTeam();
 	bool	SetStats(std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats, int index);
-	void	SetState(BotState bState);
+	void	SetState(BotState _state);
 
 	//Triggers
 	void OnAttack(int damage, Bot* attacker);
@@ -54,6 +54,7 @@ public:
 
 	Unit* unit;
 	Bot* target;
+	fPoint targetPos;
 
 	StarcraftBot* father;
 

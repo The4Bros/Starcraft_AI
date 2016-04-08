@@ -43,28 +43,28 @@
   <AI>
     <camp name ="entities">
       <entity name="unit_1">
-        <attribute type="1" value="150">hp</attribute>
+        <attribute type="1" value="200">hp</attribute>
         <attribute type="3" value="true">flying</attribute>
         <attribute type="0" value="250.0">maxSpeed</attribute>
         <attribute type="0" value="2.0">targetRadius</attribute>
-        <attribute type="1" value="20">damage</attribute>
-        <attribute type="0" value="200.0">sightRange</attribute>
-        <attribute type="0" value="90.0">attackRange</attribute>
-        <attribute type="0" value="0.5">attackSpeed</attribute>
+        <attribute type="1" value="25">damage</attribute>
+        <attribute type="0" value="300.0">sightRange</attribute>
+        <attribute type="0" value="150.0">attackRange</attribute>
+        <attribute type="0" value="0.4">attackSpeed</attribute>
         <attribute type="3" value="false">kites</attribute>
         <attribute type="3" value="false">flees</attribute>
       </entity>
       <entity name="unit_2">
-        <attribute type="1" value="50">hp</attribute>
+        <attribute type="1" value="200">hp</attribute>
         <attribute type="3" value="true">flying</attribute>
         <attribute type="0" value="200.0">maxSpeed</attribute>
         <attribute type="0" value="2.0">targetRadius</attribute>
-        <attribute type="1" value="10">damage</attribute>
-        <attribute type="0" value="150.0">sightRange</attribute>
-        <attribute type="0" value="50.0">attackRange</attribute>
-        <attribute type="0" value="0.5">attackSpeed</attribute>
+        <attribute type="1" value="20">damage</attribute>
+        <attribute type="0" value="250.0">sightRange</attribute>
+        <attribute type="0" value="150.0">attackRange</attribute>
+        <attribute type="0" value="0.6">attackSpeed</attribute>
         <attribute type="3" value="false">kites</attribute>
-        <attribute type="3" value="false">flees</attribute>
+        <attribute type="3" value="true">flees</attribute>
       </entity>
       <entity name="unit_3">
         <attribute type="1" value="150">hp</attribute>

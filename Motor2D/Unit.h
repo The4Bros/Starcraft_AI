@@ -72,7 +72,7 @@ public:
 	void DrawDebug();
 
 	void Target();
-
+	bool ArrivedToDestination();
 	void Hit(int damage, DamageType type);
 
 private:
@@ -91,10 +91,9 @@ public:
 	bool targetReached = true;
 	float team;
 	Bot* father;
+	Unit_Type type;
 
 private:
-
-	Unit_Type type;
 
 	//Velocities
 	C_Vec2<float> currentVelocity = { 0, 0 };
@@ -108,7 +107,7 @@ private:
 	bool targeted = false;
 	j1Timer targetedTimer;
 	int targetedTimerInterval = 1;
-	int targetedTimerDuration = 15;
+	int targetedTimerDuration = 6;
 };
 
 #endif //__UNIT_H__

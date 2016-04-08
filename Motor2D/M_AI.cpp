@@ -108,28 +108,29 @@ bool M_AI::Update(float dt)
 }
 bool M_AI::PostUpdate(float dt)
 {
-	C_List_item<Bot*>* item;
-	C_List_item<Bot*>* item2;
+	C_List_item<Bot*>* item = NULL;
+	C_List_item<Bot*>* item2 = NULL;
 
 	if (deadStarcraftBotList.count() > 0)
 	{
-		C_List_item<StarcraftBot*>* _item;
-		C_List_item<StarcraftBot*>* _item2;
+		C_List_item<StarcraftBot*>* _item = NULL;
+		C_List_item<StarcraftBot*>* _item2 = NULL;
 		for (_item = deadStarcraftBotList.start; _item; _item = _item2)
 		{
 			_item2 = _item->next;
 
 			if (_item->data->units.count() > 0)
 			{
-				for (item = _item->data->units.start; item; item = item2)
+				item = _item->data->units.start;
+
+				for (; item; item = item2)
 				{
 					item2 = item->next;
-					botList.add(item->data);
+					deadBotList.add(item->data);
 				}
 			}
 
 			deadStarcraftBotList.del(deadStarcraftBotList.At(deadStarcraftBotList.find(_item->data)));
-			deadStarcraftBotList.del(_item);
 		}
 	}
 
@@ -142,6 +143,8 @@ bool M_AI::PostUpdate(float dt)
 			if (item->data->father != NULL)
 			{
 				item->data->father->units.del(item->data->father->units.At(item->data->father->units.find(item->data)));
+				item->data->father->endangeredUnits.del(item->data->father->endangeredUnits.At(item->data->father->endangeredUnits.find(item->data)));
+				item->data->father->idleUnits.del(item->data->father->idleUnits.At(item->data->father->idleUnits.find(item->data)));
 			}
 			botList.del(botList.At(botList.find(item->data)));
 			deadBotList.del(item);
@@ -191,7 +194,7 @@ Bot* M_AI::CreateEnemyBot(int x, int y, Unit_Type type, StarcraftBot* father)
 
 	if (App->pathFinding->IsWalkable(tile.x, tile.y))
 	{
-		ret = new Bot(x, y, type, playerTeam + 1.0f, NULL);
+		ret = new Bot(x, y, type, playerTeam + 1.0f, father);
 
 		std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
 		App->AI->GetEntityData(type, &entity_stats);
@@ -251,9 +254,7 @@ void M_AI::OnUnitDanger(StarcraftBot* father, Bot* unit)
 void M_AI::OnUnitIdle(StarcraftBot* father, Bot* unit)
 {
 	if (father && unit)
-	{
 		father->idleUnits.add(unit);
-	}
 }
 
 bool M_AI::GetEnemies(float team, C_List<Bot*>* enemies)

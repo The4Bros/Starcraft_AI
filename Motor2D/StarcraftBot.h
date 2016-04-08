@@ -28,17 +28,10 @@ public:
 
 	float team;
 	fPoint base;
-	int maxPopulation = 4;
-
-
-	j1Timer updateTimer;
-	float fixedUpdateSeconds = 0.05f;
+	int maxPopulation = 5;
 
 	j1Timer spawnTimer;
-	float SpawnTime = 0.5f;
-
-	bool attacking = false;
-
+	float SpawnTime = 1.5f;
 
 	C_List<Bot*> units;
 	C_List<Bot*> endangeredUnits;

@@ -63,7 +63,7 @@ bool Unit::Update(float dt)
 	}
 	if (targetReached)
 	{
-		//GetNewTarget();
+		GetNewTarget();
 	}
 	if (GetHP() <= 0)
 	{
@@ -219,6 +219,11 @@ bool Unit::GetNewTarget()
 	return false;
 }
 
+bool Unit::ArrivedToDestination()
+{
+	return ((uint)currentNode + 1 >= path.Count());
+}
+
 bool Unit::isTargetReached()
 {
 	bool ret = false;
@@ -257,8 +262,7 @@ void Unit::SetTarget(int x, int y)
 
 void Unit::Stop()
 {
-	target.x = position.x;
-	target.y = position.y;
+	currentNode = path.Count();
 	targetReached = true;
 }
 
@@ -366,7 +370,7 @@ void Unit::Draw()
 		{
 			if ((Itime / targetedTimerInterval) % 2 == 0)
 			{
-				App->render->Blit(App->entityManager->unit_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
+				App->render->Blit(App->entityManager->unit_red_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
 			}
 		}
 		else
