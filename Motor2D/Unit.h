@@ -6,11 +6,13 @@
 #include "C_DynArray.h"
 #include "SimpleCVar.h"
 #include <map>
+#include "j1Timer.h"
 
 #include "Entity.h"
 #include "Controlled.h"
 
 class UIBar;
+class Bot;
 
 enum Unit_Type
 {
@@ -25,11 +27,12 @@ enum DamageType
 	splash,
 };
 
+
 class Unit : public Controlled
 {
 public:
 	Unit();
-	Unit(float x, float y, float team);
+	Unit(float x, float y, float team, Bot* father);
 	Unit(fPoint);
 	~Unit();
 
@@ -68,6 +71,8 @@ public:
 	void Draw();
 	void DrawDebug();
 
+	void Target();
+
 	void Hit(int damage, DamageType type);
 
 private:
@@ -85,6 +90,7 @@ public:
 	int currentNode = 0;
 	bool targetReached = true;
 	float team;
+	Bot* father;
 
 private:
 
@@ -99,6 +105,10 @@ private:
 	float rotationSpeed = 360.0f; //Used as angles / seconds
 	float targetRadius = 2.0f;
 
+	bool targeted = false;
+	j1Timer targetedTimer;
+	int targetedTimerInterval = 1;
+	int targetedTimerDuration = 15;
 };
 
 #endif //__UNIT_H__

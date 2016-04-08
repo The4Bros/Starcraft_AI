@@ -70,7 +70,7 @@ void Controlled::CreateBar()
 
 void Controlled::UpdateBarState()
 {
-	if (selected)
+	if (selected || currHP != maxHP)
 	{
 		HPBar_Empty->SetActive(true);
 		HPBar_Filled->SetActive(true);
@@ -98,12 +98,12 @@ void Controlled::UpdateBarPosition()
 
 void Controlled::UpdateBarTexture()
 {
-	if (currHP <= 20)
+	if (currHP <= maxHP / 4)
 	{
 		if (HPBar_Filled->GetTexture() != App->entityManager->hpBar_low)
 			HPBar_Filled->SetTexture(App->entityManager->hpBar_low);
 	}
-	else if (currHP <= 50)
+	else if (currHP <= maxHP / 2)
 	{
 		if (HPBar_Filled->GetTexture() != App->entityManager->hpBar_mid)
 			HPBar_Filled->SetTexture(App->entityManager->hpBar_mid);

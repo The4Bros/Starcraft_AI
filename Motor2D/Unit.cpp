@@ -11,13 +11,14 @@
 #include "S_SceneAI.h"
 #include <math.h>
 #include <cmath>
+#include "Bot.h"
 
 Unit::Unit() :Controlled()
 {
 
 }
 
-Unit::Unit(float x, float y, float team) : team(team)
+Unit::Unit(float x, float y, float team, Bot* father) : team(team), father(father)
 {
 	position = { x, y };
 }
@@ -62,7 +63,7 @@ bool Unit::Update(float dt)
 	}
 	if (targetReached)
 	{
-		GetNewTarget();
+		//GetNewTarget();
 	}
 	if (GetHP() <= 0)
 	{
@@ -220,12 +221,20 @@ bool Unit::GetNewTarget()
 
 bool Unit::isTargetReached()
 {
+	bool ret = false;
 	C_Vec2<float> vec;
 	vec.x = target.x - position.x;
 	vec.y = target.y - position.y;
 	float distance = vec.GetModule();
+	
+	if (distance < targetRadius)
+	{
+		position.x = target.x;
+		position.y = target.y;
+		ret = true;
+	}
 
-	return (distance < targetRadius);
+	return ret;
 }
 
 bool Unit::isAngleReached()
@@ -346,15 +355,30 @@ void Unit::Draw()
 	SDL_Rect rect = {0, 0, 76, 76 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-	if (App->sceneAI->renderUnits)
+	if (selected)
+		App->render->Blit(App->entityManager->unit_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
+	else if (targeted)
 	{
-		if (selected)
-			App->render->Blit(App->entityManager->unit_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
-		GetTextureRect(rect, flip);
-		int positionY = (int)round(position.y - 38);
-	
-		App->render->Blit(texture, (int)round(position.x - 38), positionY, true, &rect, flip);
+		float fTime = targetedTimer.ReadSec() * 10.0f;
+		int Itime = int(fTime);
+
+		if (Itime < targetedTimerDuration)
+		{
+			if ((Itime / targetedTimerInterval) % 2 == 0)
+			{
+				App->render->Blit(App->entityManager->unit_base, (int)round(position.x - 32), (int)round(position.y) - 32, true, NULL);
+			}
+		}
+		else
+		{
+			targeted = false;
+		}
 	}
+
+	GetTextureRect(rect, flip);
+	int positionY = (int)round(position.y - 38);
+
+	App->render->Blit(texture, (int)round(position.x - 38), positionY, true, &rect, flip);
 
 	//Should be independent from scene
 	if (App->sceneAI->renderForces)
@@ -405,6 +429,12 @@ void Unit::DrawDebug()
 			App->render->Blit(App->sceneAI->debug_tex, &pos, true, &rect);
 		}
 	}
+}
+
+void Unit::Target()
+{
+	targeted = true;
+	targetedTimer.Start();
 }
 
 void Unit::Hit(int damage, DamageType type)

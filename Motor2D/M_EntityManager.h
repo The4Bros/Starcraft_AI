@@ -6,6 +6,7 @@
 #include "SimpleCVar.h"
 
 class Unit;
+class Bot;
 enum Unit_Type;
 
 class M_EntityManager : public j1Module
@@ -25,11 +26,12 @@ public:
 
 	void ManageInput();
 
-	Unit* CreateUnit(int x, int y, Unit_Type type, float team);
+	Unit* CreateUnit(int x, int y, Unit_Type type, float team, Bot* father);
 
 	bool deleteUnit(Unit* item);
 	bool deleteUnit(C_List_item<Unit*>* item);
 	bool IsUnitSelected(C_List_item<Unit*>*);
+	bool Order(int x, int y);
 	void SendNewPath(int x, int y);
 	void SendNewPath(int x, int y, C_List<Unit*> units);
 	void SendNewPath(int x, int y, Unit* unit);
@@ -64,8 +66,6 @@ public:
 
 	//Collision variables
 	int currentPriority = 1;
-
-	float PlayerTeam = 1.0f;
 
 private:
 

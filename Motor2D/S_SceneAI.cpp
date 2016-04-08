@@ -45,8 +45,6 @@ bool S_SceneAI::Awake(pugi::xml_node& node)
 // Called before the first frame
 bool S_SceneAI::Start()
 {
-	team = 0;
-
 	pugi::xml_node config = App->GetConfig("scene");
 	App->GetConfig("scene");
 
@@ -113,25 +111,47 @@ void S_SceneAI::ManageInput(float dt)
 
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE) == KEY_DOWN)
 		{
-			int x, y;
-			App->input->GetMousePosition(x, y);
-			iPoint p = App->render->ScreenToWorld(x, y);
-			p = App->map->WorldToMap(p.x, p.y);
-			p = App->map->MapToWorld(p.x, p.y);
-			App->AI->CreateBot(p.x + 4, p.y + 4, unit_1, team);
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+			{
+				// Create enemy Bot
+				int x, y;
+				App->input->GetMousePosition(x, y);
+				iPoint p = App->render->ScreenToWorld(x, y);
+				p = App->map->WorldToMap(p.x, p.y);
+				p = App->map->MapToWorld(p.x, p.y);
+				App->AI->CreateEnemyBot(p.x + 4, p.y + 4, unit_2);
+			}
+			else
+			{
+				// Create an player Bot
+				int x, y;
+				App->input->GetMousePosition(x, y);
+				iPoint p = App->render->ScreenToWorld(x, y);
+				p = App->map->WorldToMap(p.x, p.y);
+				p = App->map->MapToWorld(p.x, p.y);
+				App->AI->CreatePlayerBot(p.x + 4, p.y + 4, unit_1);
+			}
 		}
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
+			// Create a StarcraftBot
 			int x, y;
 			App->input->GetMousePosition(x, y);
 			iPoint p = App->render->ScreenToWorld(x, y);
 			p = App->map->WorldToMap(p.x, p.y);
 			p = App->map->MapToWorld(p.x, p.y);
-			App->AI->CreateStarcraftBot(p.x + 4, p.y + 4, team + 1);
+			App->AI->CreateStarcraftBot(p.x + 4, p.y + 4);
 		}
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 		{
-			App->entityManager->SendNewPath(currentTile_x, currentTile_y);
+			// See if the selected unit/s is/are player units
+			int x, y;
+			App->input->GetMousePosition(x, y);
+			iPoint p = App->render->ScreenToWorld(x, y);
+			p = App->map->WorldToMap(p.x, p.y);
+			p = App->map->MapToWorld(p.x, p.y);
+			if (!App->entityManager->Order(p.x, p.y))
+				App->entityManager->SendNewPath(currentTile_x, currentTile_y);
 		}
 	}
 }

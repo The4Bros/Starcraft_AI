@@ -108,11 +108,45 @@ bool M_AI::Update(float dt)
 }
 bool M_AI::PostUpdate(float dt)
 {
-	if (deadBotList.count() > 0)
-		deadBotList.clear();
+	C_List_item<Bot*>* item;
+	C_List_item<Bot*>* item2;
 
 	if (deadStarcraftBotList.count() > 0)
-		deadStarcraftBotList.clear();
+	{
+		C_List_item<StarcraftBot*>* _item;
+		C_List_item<StarcraftBot*>* _item2;
+		for (_item = deadStarcraftBotList.start; _item; _item = _item2)
+		{
+			_item2 = _item->next;
+
+			if (_item->data->units.count() > 0)
+			{
+				for (item = _item->data->units.start; item; item = item2)
+				{
+					item2 = item->next;
+					botList.add(item->data);
+				}
+			}
+
+			deadStarcraftBotList.del(deadStarcraftBotList.At(deadStarcraftBotList.find(_item->data)));
+			deadStarcraftBotList.del(_item);
+		}
+	}
+
+	if (deadBotList.count() > 0)
+	{
+		for (item = deadBotList.start; item; item = item2)
+		{
+			item2 = item->next;
+
+			if (item->data->father != NULL)
+			{
+				item->data->father->units.del(item->data->father->units.At(item->data->father->units.find(item->data)));
+			}
+			botList.del(botList.At(botList.find(item->data)));
+			deadBotList.del(item);
+		}
+	}
 
 	return true;
 }
@@ -131,30 +165,51 @@ bool M_AI::CleanUp()
 }
 
 
-Bot* M_AI::CreateBot(int x, int y, Unit_Type type, float team)
+Bot* M_AI::CreatePlayerBot(int x, int y, Unit_Type type)
 {
 	Bot* ret = NULL;
 	iPoint tile = App->map->WorldToMap(x, y);
 
 	if (App->pathFinding->IsWalkable(tile.x, tile.y))
 	{
-		ret = new Bot(x, y, type, team, NULL);
-
+		ret = new Bot(x, y, type, playerTeam, NULL);
+		
 		std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
 		App->AI->GetEntityData(type, &entity_stats);
 		ret->SetStats(entity_stats, 4);
+
 		AddBot(ret);
 	}
 
 	return ret;
 }
 
-StarcraftBot* M_AI::CreateStarcraftBot(int x, int y, float team)
+Bot* M_AI::CreateEnemyBot(int x, int y, Unit_Type type, StarcraftBot* father)
+{
+	Bot* ret = NULL;
+	iPoint tile = App->map->WorldToMap(x, y);
+
+	if (App->pathFinding->IsWalkable(tile.x, tile.y))
+	{
+		ret = new Bot(x, y, type, playerTeam + 1.0f, NULL);
+
+		std::pair<const char*, std::map<const char*, SimpleCVar >> entity_stats;
+		App->AI->GetEntityData(type, &entity_stats);
+		ret->SetStats(entity_stats, 4);
+
+		AddBot(ret);
+	}
+
+	return ret;
+}
+
+StarcraftBot* M_AI::CreateStarcraftBot(int x, int y)
 {
 	StarcraftBot* ret = NULL;
 
-	ret = new StarcraftBot(x, y, team);
-	
+	//TODO 4:Create a StarcraftBot
+
+	ret = new StarcraftBot(x, y, playerTeam + 1.0f);
 	AddStarcraftBot(ret);
 
 	return ret;
@@ -177,19 +232,17 @@ bool M_AI::GetEntityData(Unit_Type type, std::pair<const char*, std::map < const
 
 void M_AI::OnUnitKill(StarcraftBot* father, Bot* unit)
 {
-	if (!father)
-	{
-		deadBotList.add(unit);
-	}
-	else
+	if (father)
 	{
 		father->OnUnitKill(unit);
 	}
+
+	deadBotList.add(unit);
 }
 
 void M_AI::OnUnitDanger(StarcraftBot* father, Bot* unit)
 {
-	if (father && unit)
+	if (father && unit && father->endangeredUnits.find(unit) == -1)
 	{
 		father->endangeredUnits.add(unit);
 	}
@@ -203,18 +256,17 @@ void M_AI::OnUnitIdle(StarcraftBot* father, Bot* unit)
 	}
 }
 
-C_List<Bot*> M_AI::GetEnemies(float team)
+bool M_AI::GetEnemies(float team, C_List<Bot*>* enemies)
 {
-	C_List<Bot*> ret;
-	C_List_item<Bot*>* item = NULL;
-	item = botList.start;
+	C_List_item<Bot*>* item = botList.start;
 	while (item)
 	{
 		if (item->data->unit->team != team)
-			ret.add(item->data);
+			enemies->add(item->data);
 		item = item->next;
 	}
-	return ret;
+
+	return (enemies->count() > 0);
 }
 
 bool M_AI::AddBot(Bot* bot)

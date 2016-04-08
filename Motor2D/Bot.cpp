@@ -12,7 +12,7 @@ Bot::Bot()
 }
 Bot::Bot(int x, int y, Unit_Type type, float team, StarcraftBot* father)
 {
-	unit = App->entityManager->CreateUnit(x, y, type, team);
+	unit = App->entityManager->CreateUnit(x, y, type, team, this);
 	initialPos.x = x;
 	initialPos.y = y;
 	target = NULL;
@@ -23,7 +23,8 @@ Bot::Bot(int x, int y, Unit_Type type, float team, StarcraftBot* father)
 
 Bot::~Bot()
 {
-
+	App->entityManager->deleteUnit(unit);
+	target = NULL;
 }
 
  bool Bot::Update(float dt)
@@ -39,23 +40,6 @@ Bot::~Bot()
 		updateTimer.Start();
 	}
 
-	if (!father)
-	{
-		//has to handle own behaviour
-
-		if (state == attack)
-		{
-			if (unit->isTargetReached())
-			{
-				if (attackSpeed <= attackTimer.ReadSec())
-				{
-					target->OnAttack(damage, this);
-					attackTimer.Start();
-				}
-			}
-		}
-	}
-
 	return ret;
 }
 
@@ -66,7 +50,7 @@ bool Bot::FixedUpdate()
 	{
  	case BotState::idle:
 		LOG("IDLE STATE");
-		if (CheckForEnemies())
+		if (unit->team != App->AI->playerTeam && CheckForEnemies())
 		{
 			SetState(attack);
 		}
@@ -74,45 +58,48 @@ bool Bot::FixedUpdate()
 
 	case BotState::attack:
 		LOG("ATTACK STATE");
-		if (target)
+		if (App->AI->botList.find(target) != -1)
 		{
 			if (flees)
 			{
-				if (unit->GetHP() < unit->GetMaxHP() / 10) //flee when less than 10% health
-					SetState(flee);
-			}
-			if (kites && unit->isTargetReached())
-			{
-				float distance = DistanceBetweenUnits(target->unit, unit);
-
-				if (distance < attackRange * 0.3f)
+				if (unit->GetHP() < unit->GetMaxHP() )/// 10) //flee when less than 10% health
 				{
-					int x, y;
+					SetState(flee);
+					break;
+				}
+			}
 
-					x = unit->GetPosition().x;
-					y = unit->GetPosition().y;
+			if (EnemyOnRange(target->unit, unit, attackRange))
+			{
+				//TODO: 3 - Attack target
+				if (!unit->targetReached)
+					unit->Stop();
 
-					/******************************
-					SET X & Y FOR KITING POSITION
-					*******************************/
+				if (attackTimer.ReadSec() >= attackSpeed)
+				{
+					attackTimer.Start();
+					target->OnAttack(damage, this);
+				}
+			}
+			else if (EnemyOnRange(target->unit, unit, sightRange) || unit->team == App->AI->playerTeam)
+			{
+				//TODO: 2 - Chase target
+				iPoint iTargetPos = { int(target->GetPos().x), int(target->GetPos().y) };
 
+				if (iTargetPos != unit->target)
+				{
 					C_DynArray<iPoint> newPath;
 					fPoint unitPos = unit->GetPosition();
+					fPoint targetPos = target->unit->GetPosition();
 					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
-					App->pathFinding->GetNewPath(unitTile, { x, y }, newPath);
+					iPoint enemyTile = App->map->WorldToMap(round(targetPos.x), round(targetPos.y));
+					App->pathFinding->GetNewPath(unitTile, enemyTile, newPath);
 					unit->SetNewPath(newPath);
 				}
-
 			}
-			else if (!EnemyOnRange(target->unit, unit, attackRange))
+			else
 			{
-				C_DynArray<iPoint> newPath;
-				fPoint unitPos = unit->GetPosition();
-				fPoint targetPos = target->unit->GetPosition();
-				iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
-				iPoint enemyTile = App->map->WorldToMap(round(targetPos.x), round(targetPos.y));
-				App->pathFinding->GetNewPath(unitTile, enemyTile, newPath);
-				unit->SetNewPath(newPath);
+				SetState(idle);
 			}
 		}
 		else
@@ -126,9 +113,9 @@ bool Bot::FixedUpdate()
 		LOG("FLEE STATE");
 		if (unit->isTargetReached())
 		{
-			if (DistanceBetweenUnits(target->unit, unit) < sightRange * 4.0f)
+			if (DistanceBetweenUnits(target->unit, unit) < sightRange * 1.5f)
 			{ 
-				// flees in random position
+				// flees in random direction
 				int x = (rand() % 600) + unit->GetPosition().x;
 				int y = (rand() % 600) + unit->GetPosition().y;
 
@@ -137,6 +124,7 @@ bool Bot::FixedUpdate()
 				iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
 				App->pathFinding->GetNewPath(unitTile, { x, y }, newPath);
 				unit->SetNewPath(newPath);
+				
 			}
 			else
 			{
@@ -173,7 +161,7 @@ bool Bot::CheckForEnemies()
 
 	if (potentialTargets.count() > 0)
 	{
-		item = App->AI->botList.start;
+		item = potentialTargets.start;
 		
 		float closestdistance = DistanceBetweenUnits(item->data->unit, unit);
 		float distance = 0.0f;
@@ -305,6 +293,7 @@ void Bot::SetState(BotState bState)
 	switch (state)
 	{
 	case idle:
+		target = NULL;
 		App->AI->OnUnitIdle(father, this);
 		break;
 	}
@@ -318,11 +307,7 @@ void Bot::OnAttack(int damage, Bot* attacker)
 
 	if (unit->GetHP() <= 0)
 	{
-		App->entityManager->deleteUnit(unit);
-		App->AI->deadBotList.add(this);
-
-		if (father)
-			App->AI->OnUnitKill(father, this);
+		OnKill();
 	}
 	else if (father)
 	{
@@ -335,11 +320,15 @@ void Bot::OnAttack(int damage, Bot* attacker)
 		else
 			SetState(attack);
 	}
-	else
-	{
-		SetState(attack);
-	}
+	else if (state != attack)
+		Attack(attacker);
 }
+
+void Bot::OnKill()
+{
+	App->AI->deadBotList.add(this);
+}
+
 
 void Bot::Attack(Bot* target)
 {

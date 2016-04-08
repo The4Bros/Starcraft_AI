@@ -55,10 +55,6 @@ public:
 	SDL_Texture* collision_tex = NULL;
 	SDL_Texture* mapTexture = NULL;
 
-private:
-
-	float team;
-
 #pragma region Commands
 
 	struct C_SaveGame : public Command

@@ -44,6 +44,7 @@ public:
 
 	//Triggers
 	void OnAttack(int damage, Bot* attacker);
+	void OnKill();
 	
 	//Orders
 	void Attack(Bot* target);
@@ -60,7 +61,7 @@ public:
 	j1Timer updateTimer;
 	j1Timer attackTimer;
 
-	float fixedUpdateSeconds = 2.0f;//0.25f;
+	float fixedUpdateSeconds = 0.0f;
 	float attackSpeed = 0.0f;
 
 	BotState state = idle;

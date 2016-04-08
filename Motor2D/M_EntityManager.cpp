@@ -89,6 +89,7 @@ void M_EntityManager::DoUnitLoop(float dt)
 
 	while (item)
 	{
+		item->data->UpdateBarState();
 		if (selectUnits)
 		{
 			if (selectionRect.w != 0 || selectionRect.h != 0)
@@ -238,7 +239,7 @@ void M_EntityManager::ManageInput()
 
 }
 
-Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, float team)
+Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, float team, Bot* father)
 {
 	Unit* unit = NULL;
 
@@ -249,7 +250,7 @@ Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type, float team)
 
 	if (isWalkable && App->AI->GetEntityData(type, &entity_stats))
 	{
-		unit = new Unit(x, y, team);
+		unit = new Unit(x, y, team, father);
 		if (unit->SetStats(entity_stats))
 		{
 			unit->SetType(type);
@@ -319,6 +320,45 @@ bool M_EntityManager::IsUnitSelected(C_List_item<Unit*>* unit)
 	}
 }
 
+bool M_EntityManager::Order(int x, int y)
+{
+	if (selectedUnits.count() > 0)
+	{
+		// can't order if not on our team
+		if (selectedUnits.start->data->team == App->AI->playerTeam)
+		{
+			C_List_item<Unit*>* item = unitList.start;
+			SDL_Rect itemRect;
+
+			SDL_Rect rect = { x - 3, y - 3, 6, 6 };
+
+			while (item)
+			{
+				itemRect = item->data->GetCollider();
+				itemRect.x += App->render->camera.x;
+				itemRect.y += App->render->camera.y;
+
+				if (SDL_HasIntersection(&rect, &itemRect) && item->data->team != App->AI->playerTeam)
+				{
+					C_List_item<Unit*>* selected = selectedUnits.start;
+
+					while (selected)
+					{
+						selected->data->father->Attack(item->data->father);
+						selected = selected->next;
+					}
+
+					return true;
+				}
+
+				item = item->next;
+			}
+
+			return false;
+		}
+	}
+}
+
 void M_EntityManager::SendNewPath(int x, int y)
 {
 	if (App->pathFinding->allowPath)
@@ -330,7 +370,6 @@ void M_EntityManager::SendNewPath(int x, int y)
 			{
 				if (groupMovement)
 				{
-
 					C_DynArray<iPoint> newPath;
 
 					//Cloning group rectangle to the destination point
@@ -339,8 +378,6 @@ void M_EntityManager::SendNewPath(int x, int y)
 
 					//Distance from rectangle position to unit position
 					iPoint posFromRect = { 0, 0 };
-					
-					//Send a different path for each unit:
 					posFromRect.x = selectedUnits[i]->GetPosition().x - groupRect.x;
 					posFromRect.y = selectedUnits[i]->GetPosition().y - groupRect.y;
 
@@ -356,13 +393,12 @@ void M_EntityManager::SendNewPath(int x, int y)
 
 					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
 					selectedUnits[i]->SetNewPath(newPath);
-					//----------------------------------------------
-					
-					
 				}
 				else
 				{
 					C_DynArray<iPoint> newPath;
+
+					//---------------------------------------------------------
 					fPoint unitPos = selectedUnits[i]->GetPosition();
 					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
 					iPoint dstTile = { x, y };
