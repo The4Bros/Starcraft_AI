@@ -50,11 +50,14 @@ bool Bot::FixedUpdate()
 	{
  	case BotState::idle:
 		LOG("IDLE STATE");
+
+		// Check if the Unit is a player Unit
 		if (unit->team == App->AI->playerTeam)
 		{
 			if (unit->ArrivedToDestination())
 				CheckForEnemies();
 		}
+
 		else
 		{
 			CheckForEnemies();
@@ -65,27 +68,30 @@ bool Bot::FixedUpdate()
 		LOG("ATTACK STATE");
 		if (App->AI->botList.find(target) != -1)
 		{
+			//If this Unit Evades when low life, Set the state to flee
 			if (flees)
 			{
 				if (unit->GetHP() < unit->GetMaxHP() / 4) //flee when less than 10% health
 				{
-					SetState(flee);
-					break;
+						SetState(flee);
+						break;
 				}
 			}
-
+			//Check if target is on the Attack Range
 			if (EnemyOnRange(target->unit, unit, attackRange))
 			{
 				//TODO: 3 - Attack target
 				if (!unit->ArrivedToDestination())
 					unit->Stop();
-
+				//Attack Unit 
+				//Attack according to attackspeed
 				if (attackTimer.ReadSec() >= attackSpeed)
 				{
 					attackTimer.Start();
 					target->OnAttack(damage, this);
 				}
 			}
+			//If is not on the attack range, chase him
 			else if (unit->team == App->AI->playerTeam || father != NULL || EnemyOnRange(target->unit, unit, sightRange))
 			{
 				//TODO: 2 - Chase target
@@ -129,7 +135,6 @@ bool Bot::FixedUpdate()
 				iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
 				App->pathFinding->GetNewPath(unitTile, { x, y }, newPath);
 				unit->SetNewPath(newPath);
-				
 			}
 			else
 			{
@@ -143,16 +148,14 @@ bool Bot::FixedUpdate()
 }
 
 
-
-
-
 bool Bot::CheckForEnemies()
 {
 	bool ret = false;
 	C_List<Bot*> potentialTargets;
 	C_List_item<Bot*>* item = App->AI->botList.start;
 
-	// check for potential enemy bots
+	//TODO: 2 - Find target
+	// Add to "potentialTargets"  list the Units of the other team that are on sightrange
 	while (item)
 	{
 		if (item->data->GetTeam() != unit->team)
@@ -164,6 +167,8 @@ bool Bot::CheckForEnemies()
 		item = item->next;
 	}
 
+	//TODO: 2 - Find target
+	//Now let's find the closest one
 	if (potentialTargets.count() > 0)
 	{
 		item = potentialTargets.start;
@@ -184,7 +189,7 @@ bool Bot::CheckForEnemies()
 
 			item = item->next;
 		}
-
+		//If we find a valid target Set the state to attack State
 		SetState(attack);
 		ret = true;
 	}
@@ -192,45 +197,7 @@ bool Bot::CheckForEnemies()
 	return ret;
 }
 
-void Bot::FollowTarget()
-{
-	unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + unit->colRadius), target->unit->GetPosition().y - (target->unit->colRadius + unit->colRadius));
-}
-
-bool Bot::KiteFromEnemy(int attackrange)
-{
-	C_Vec2<float> distance = { target->unit->GetPosition().x - unit->GetPosition().x, target->unit->GetPosition().y - unit->GetPosition().y };
-	if (distance.x > 0 && distance.y > 0)
-	{
-		unit->SetTarget(target->unit->GetPosition().x + (target->unit->colRadius + attackrange), target->unit->GetPosition().y - (target->unit->colRadius + attackrange));
-	}
-	else if (distance.x > 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->unit->GetPosition().x + (target->unit->colRadius + attackrange), target->unit->GetPosition().y + (target->unit->colRadius + attackrange));
-	}
-	else if (distance.x < 0 && distance.y < 0)
-	{
-		unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + attackrange), target->unit->GetPosition().y + (target->unit->colRadius + attackrange));
-		
-	}
-	else
-	{
-		unit->SetTarget(target->unit->GetPosition().x - (target->unit->colRadius + attackrange), target->unit->GetPosition().y - (target->unit->colRadius + attackrange));
-	}
-
-	return true;
-}
-
-
-void Bot::FindPlaceToFight(){
-
-	C_Vec2<float> distance = { (target->unit->GetPosition().x + unit->GetPosition().x) / 2, (target->unit->GetPosition().y + unit->GetPosition().y) / 2 };
-	
-	if (App->pathFinding->IsWalkable(distance.x , distance.y))
-		unit->SetTarget(distance.x - (target->unit->colRadius + 20), distance.y - (target->unit->colRadius + 20));
-	
-}
-
+// Useful Distance functions
 bool Bot::EnemyOnRange(Unit* unit1, Unit* unit2, float range)
 {
 	C_Vec2<float> distance = { unit1->GetPosition().x - unit2->GetPosition().x, unit1->GetPosition().y - unit2->GetPosition().y };
@@ -248,6 +215,7 @@ C_Vec2<float> Bot::DistanceWithTarget()
 	C_Vec2<float> distance = { unit->GetPosition().x - target->unit->GetPosition().x, unit->GetPosition().y - target->unit->GetPosition().y };
 	 return distance;
 }
+
 
 fPoint Bot::GetPos()
 {
